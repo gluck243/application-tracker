@@ -2,7 +2,7 @@ package com.gluck.jobtracker
 
 enum class Status {
     APPLIED,
-    INTERVIEW,
+    INTERVIEWING,
     REJECTED,
     OFFER,
     GHOSTED,
