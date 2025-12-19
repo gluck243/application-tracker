@@ -1,15 +1,33 @@
 package com.gluck.jobtracker
 
 import com.gluck.base.ui.MainLayout
+import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.router.Menu
 import com.vaadin.flow.router.Route
 
 @Route(value = "", layout = MainLayout::class)
-class JobListView: VerticalLayout() {
+@Menu(title = "Applications", order = 1.0, icon = "vaadin:dashboard")
+class JobListView(private val  repository: ApplicationRepository): VerticalLayout() {
+
+    private val grid = Grid(JobApplication::class.java)
 
     init {
-        add(H1("Hello from Kotlin View!"))
+        addClassName("list-view")
+        setSizeFull()
+        configureGrid()
+        add(H1("Job Applications"), grid)
+        updateList()
+    }
+
+    private fun configureGrid() {
+        grid.setColumns("position", "companyName", "status")
+        grid.columns.forEach { it.isAutoWidth = true }
+    }
+
+    private fun updateList() {
+        grid.setItems(repository.findAll())
     }
 
 }
