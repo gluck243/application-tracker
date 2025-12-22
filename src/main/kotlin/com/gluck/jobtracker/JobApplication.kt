@@ -17,10 +17,10 @@ class JobApplication(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val position: String = "",
+    var position: String = "",
 
     @Column(nullable = false)
-    val companyName: String = "",
+    var companyName: String = "",
 
     @Enumerated @Column(nullable = false)
     val status: Status = Status.WISH_LIST,
