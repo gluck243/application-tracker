@@ -23,7 +23,7 @@ class JobApplication(
     var companyName: String = "",
 
     @Enumerated @Column(nullable = false)
-    val status: Status = Status.WISH_LIST,
+    var status: Status = Status.WISH_LIST,
 
     @Column(nullable = true)
     val dateApplied: LocalDate? = null,
