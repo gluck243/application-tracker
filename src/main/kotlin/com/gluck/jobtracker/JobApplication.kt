@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Lob
 import jakarta.persistence.Table
+import jakarta.validation.constraints.NotBlank
 import java.time.LocalDate
 
 @Entity
@@ -16,10 +17,10 @@ class JobApplication(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
-    @Column(nullable = false)
+    @Column(nullable = false) @NotBlank(message = "Position canot be blank")
     var position: String = "",
 
-    @Column(nullable = false)
+    @Column(nullable = false) @NotBlank(message = "Company name canot be blank")
     var companyName: String = "",
 
     @Enumerated @Column(nullable = false)
