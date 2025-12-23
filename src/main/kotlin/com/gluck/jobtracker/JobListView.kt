@@ -8,6 +8,8 @@ import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.value.ValueChangeMode
 import com.vaadin.flow.router.Menu
 import com.vaadin.flow.router.Route
 
@@ -18,6 +20,8 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
     private val grid = Grid(JobApplication::class.java)
     private val jobForm = JobForm()
     private val dialog = Dialog("Job Application Information")
+    val filterField = TextField()
+
 
     init {
         addClassName("list-view")
@@ -25,7 +29,12 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
         configureGrid()
         configureDialog()
         configureJobForm()
-        add(H1("Job Applications"), getToolbar(), grid)
+        add(
+            H1("Job Applications"),
+            getToolbar(),
+            getFilterField(),
+            grid
+        )
         updateList()
     }
 
@@ -52,7 +61,10 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
     }
 
     private fun updateList() {
-        grid.setItems(repository.findAll())
+        if (filterField.value.isNullOrEmpty())
+            grid.setItems(repository.findAll())
+        else
+            grid.setItems(repository.filterByCompany(filterField.value))
     }
 
     private fun configureJobForm() {
@@ -82,6 +94,7 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
         addJobButton.addClickListener {
             addJob()
         }
+
         return HorizontalLayout(addJobButton)
     }
 
@@ -89,6 +102,14 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
         grid.asSingleSelect().clear()
         jobForm.setJob(JobApplication())
         dialog.open()
+    }
+
+    private fun getFilterField(): Component {
+        filterField.valueChangeMode = ValueChangeMode.LAZY
+        filterField.addValueChangeListener {
+            updateList()
+        }
+        return HorizontalLayout(filterField)
     }
 
 }

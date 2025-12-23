@@ -14,7 +14,7 @@ import java.time.LocalDate
 @Table(name = "job_applications")
 class JobApplication(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    var id: Long = 0,
 
     @Column(nullable = false)
     var position: String = "",
@@ -30,6 +30,4 @@ class JobApplication(
 
     @Lob @Column(nullable = true)
     val description: String? = ""
-) {
-    constructor() : this(0)
-}
+) {}
