@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route
 
 @Route(value = "", layout = MainLayout::class)
 @Menu(title = "Applications", order = 1.0, icon = "vaadin:dashboard")
-class JobListView(private val  repository: ApplicationRepository): VerticalLayout() {
+class JobListView(private val service: JobService): VerticalLayout() {
 
     private val grid = Grid(JobApplication::class.java)
     private val jobForm = JobForm()
@@ -47,12 +47,17 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
     }
 
     private fun editJob(job: JobApplication) {
-        if(job == null) {
-            closeEditor()
-        } else {
-            jobForm.setJob(job)
-            dialog.open()
-        }
+//        if(job == null) {
+//            closeEditor()
+//        }
+//        else {
+//            jobForm.setJob(job)
+//            dialog.open()
+//        }
+
+        jobForm.setJob(job)
+        dialog.open()
+
     }
 
     private fun closeEditor() {
@@ -62,20 +67,20 @@ class JobListView(private val  repository: ApplicationRepository): VerticalLayou
 
     private fun updateList() {
         if (filterField.value.isNullOrEmpty())
-            grid.setItems(repository.findAll())
+            grid.setItems(service.getAllJobs())
         else
-            grid.setItems(repository.filterByCompany(filterField.value))
+            grid.setItems(service.findJobsByCompanyName(filterField.value))
     }
 
     private fun configureJobForm() {
         jobForm.addSaveListener { event ->
-            repository.save(event.job)
+            service.saveJob(event.job)
             updateList()
             closeEditor()
         }
 
         jobForm.addDeleteListener { event ->
-            repository.delete(event.job)
+            service.deleteJob(event.job)
             updateList()
             closeEditor()
         }
