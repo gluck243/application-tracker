@@ -17,10 +17,10 @@ class JobApplication(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
-    @Column(nullable = false) @NotBlank(message = "Position canot be blank")
+    @Column(nullable = false) @NotBlank(message = "Position cannot be blank")
     var position: String = "",
 
-    @Column(nullable = false) @NotBlank(message = "Company name canot be blank")
+    @Column(nullable = false) @NotBlank(message = "Company name cannot be blank")
     var companyName: String = "",
 
     @Enumerated @Column(nullable = false)
