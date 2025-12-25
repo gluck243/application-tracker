@@ -1,4 +1,4 @@
-package com.gluck.jobtracker.config
+package com.gluck.jobtracker
 
 import com.gluck.jobtracker.model.JobApplication
 import com.gluck.jobtracker.model.Status

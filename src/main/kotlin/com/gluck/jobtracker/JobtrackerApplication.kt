@@ -1,4 +1,4 @@
-package com.gluck
+package com.gluck.jobtracker
 
 import com.vaadin.flow.component.dependency.StyleSheet
 import com.vaadin.flow.theme.lumo.Lumo
