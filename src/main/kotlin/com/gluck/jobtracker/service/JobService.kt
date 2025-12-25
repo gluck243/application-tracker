@@ -1,5 +1,7 @@
-package com.gluck.jobtracker
+package com.gluck.jobtracker.service
 
+import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.repository.ApplicationRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Exception

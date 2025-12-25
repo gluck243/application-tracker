@@ -1,6 +1,8 @@
-package com.gluck.jobtracker
+package com.gluck.jobtracker.ui
 
 import com.gluck.base.ui.MainLayout
+import com.gluck.jobtracker.service.JobService
+import com.gluck.jobtracker.model.JobApplication
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog

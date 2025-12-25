@@ -1,4 +1,4 @@
-package com.gluck.jobtracker
+package com.gluck.jobtracker.model
 
 enum class Status {
     APPLIED,

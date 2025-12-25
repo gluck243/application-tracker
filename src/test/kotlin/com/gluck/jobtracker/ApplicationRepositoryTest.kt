@@ -1,6 +1,9 @@
 package com.gluck.jobtracker
 
 
+import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.Status
+import com.gluck.jobtracker.repository.ApplicationRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest

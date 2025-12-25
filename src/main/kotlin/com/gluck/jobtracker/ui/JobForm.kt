@@ -1,5 +1,7 @@
-package com.gluck.jobtracker
+package com.gluck.jobtracker.ui
 
+import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.Status
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEvent
 import com.vaadin.flow.component.ComponentEventListener
@@ -16,7 +18,7 @@ import com.vaadin.flow.data.binder.BeanValidationBinder
 import com.vaadin.flow.data.binder.ValidationException
 import com.vaadin.flow.shared.Registration
 
-class JobForm: FormLayout() {
+class JobForm: com.vaadin.flow.component.formlayout.FormLayout() {
 
     private val position = TextField("Position")
     private val companyName = TextField("Company Name")
@@ -87,7 +89,7 @@ class JobForm: FormLayout() {
 
 }
 
-abstract class JobFormEvent(source: JobForm): ComponentEvent<JobForm>(source, false)
+abstract class JobFormEvent(source: JobForm): com.vaadin.flow.component.ComponentEvent<JobForm>(source, false)
 
 class SaveEvent(source: JobForm, val job: JobApplication): JobFormEvent(source)
 

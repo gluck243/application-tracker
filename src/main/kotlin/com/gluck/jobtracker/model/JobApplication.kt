@@ -1,5 +1,6 @@
-package com.gluck.jobtracker
+package com.gluck.jobtracker.model
 
+import com.gluck.jobtracker.model.Status
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Enumerated
