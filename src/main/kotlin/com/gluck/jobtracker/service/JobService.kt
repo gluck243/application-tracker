@@ -1,6 +1,7 @@
 package com.gluck.jobtracker.service
 
 import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.repository.ApplicationRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -8,10 +9,15 @@ import java.lang.Exception
 
 @Service
 @Transactional(rollbackFor = [Exception::class])
-class JobService(private val repository: ApplicationRepository) {
+class JobService(private val repository: ApplicationRepository, private val mapper: ApplicationMapper) {
 
-    fun getAllJobs(): List<JobApplication> {
-        return repository.findAll()
+    fun getAllJobs(): List<JobApplicationResponse> {
+        val applications = mutableListOf<JobApplicationResponse>()
+        val applicationRecords = repository.findAll()
+        for (application in applicationRecords) {
+            applications.add(mapper.toDTO(application))
+        }
+        return applications
     }
 
     fun findJobsByCompanyName(keyword: String): List<JobApplication> {
