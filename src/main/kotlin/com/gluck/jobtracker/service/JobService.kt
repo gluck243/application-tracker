@@ -1,6 +1,7 @@
 package com.gluck.jobtracker.service
 
 import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.repository.ApplicationRepository
 import org.springframework.stereotype.Service
@@ -30,6 +31,11 @@ class JobService(private val repository: ApplicationRepository, private val mapp
 
     fun deleteJob(job: JobApplication) {
         repository.delete(job)
+    }
+
+    fun getJobForEdit(id: Long): JobApplicationRequest {
+        val entity = repository.findById(id).orElseThrow()
+        return mapper.toRequest(entity)
     }
 
 }
