@@ -11,6 +11,7 @@ import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.renderer.LocalDateRenderer
 import com.vaadin.flow.data.value.ValueChangeMode
 import com.vaadin.flow.router.Menu
 import com.vaadin.flow.router.Route
@@ -32,7 +33,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
         configureDialog()
         configureJobForm()
         add(
-            H1("Job Applications"),
+            H1("My Job Applications"),
             getToolbar(),
             getFilterField(),
             grid
@@ -42,6 +43,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
 
     private fun configureGrid() {
         grid.setColumns("position", "companyName", "status")
+        grid.addColumn(LocalDateRenderer(JobApplication::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
         grid.columns.forEach { it.isAutoWidth = true }
         grid.addItemDoubleClickListener { event ->
             editJob(event.item)

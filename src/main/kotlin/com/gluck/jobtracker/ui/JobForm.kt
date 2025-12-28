@@ -3,12 +3,12 @@ package com.gluck.jobtracker.ui
 import com.gluck.jobtracker.model.JobApplication
 import com.gluck.jobtracker.model.Status
 import com.vaadin.flow.component.Component
-import com.vaadin.flow.component.ComponentEvent
 import com.vaadin.flow.component.ComponentEventListener
 import com.vaadin.flow.component.Key
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.button.ButtonVariant
 import com.vaadin.flow.component.combobox.ComboBox
+import com.vaadin.flow.component.datepicker.DatePicker
 import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
@@ -17,12 +17,16 @@ import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.BeanValidationBinder
 import com.vaadin.flow.data.binder.ValidationException
 import com.vaadin.flow.shared.Registration
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
-class JobForm: com.vaadin.flow.component.formlayout.FormLayout() {
+class JobForm: FormLayout() {
 
     private val position = TextField("Position")
     private val companyName = TextField("Company Name")
     private val status: ComboBox<Status> = ComboBox("Application status")
+    private val dateApplied = DatePicker("Application date")
 
     private val saveButton = Button(Icon(VaadinIcon.SAFE))
     private val deleteButton = Button(Icon(VaadinIcon.TRASH))
@@ -40,6 +44,7 @@ class JobForm: com.vaadin.flow.component.formlayout.FormLayout() {
             position,
             companyName,
             status,
+            setDatePicker(),
             createButtonsLayout()
         )
     }
@@ -63,6 +68,27 @@ class JobForm: com.vaadin.flow.component.formlayout.FormLayout() {
 
         return HorizontalLayout(saveButton, deleteButton, cancelButton)
 
+    }
+
+    fun setDatePicker(): Component {
+        val now = LocalDate.now(ZoneId.systemDefault())
+        dateApplied.apply {
+            isAutoOpen = true
+            isRequiredIndicatorVisible = true
+            min = now.minusDays(60)
+            max = now
+            helperText = "Must be within 60 days from today"
+            isWeekNumbersVisible = true
+            placeholder = "DD.MM.YYYY"
+            i18n = DatePicker.DatePickerI18n()
+                .setFirstDayOfWeek(1)
+                .setBadInputErrorMessage("Invalid date format")
+                .setRequiredErrorMessage("Field is required")
+                .setMinErrorMessage("Too early, choose another date")
+                .setMaxErrorMessage("Too late, choose another date")
+                .setDateFormat("dd.MM.yyyy")
+        }
+        return HorizontalLayout(dateApplied)
     }
 
     fun addSaveListener(listener: ComponentEventListener<SaveEvent>): Registration {
