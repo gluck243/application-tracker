@@ -3,6 +3,7 @@ package com.gluck.jobtracker.ui
 import com.gluck.base.ui.MainLayout
 import com.gluck.jobtracker.service.JobService
 import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationResponse
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
@@ -20,7 +21,7 @@ import com.vaadin.flow.router.Route
 @Menu(title = "Applications", order = 1.0, icon = "vaadin:dashboard")
 class JobListView(private val service: JobService): VerticalLayout() {
 
-    private val grid = Grid(JobApplication::class.java)
+    private val grid = Grid(JobApplicationResponse::class.java)
     private val jobForm = JobForm()
     private val dialog = Dialog("Job Application Information")
     val filterField = TextField()
@@ -43,14 +44,14 @@ class JobListView(private val service: JobService): VerticalLayout() {
 
     private fun configureGrid() {
         grid.setColumns("position", "companyName", "status")
-        grid.addColumn(LocalDateRenderer(JobApplication::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
+        grid.addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
         grid.columns.forEach { it.isAutoWidth = true }
-        grid.addItemDoubleClickListener { event ->
-            editJob(event.item)
-        }
+//        grid.addItemDoubleClickListener { event ->
+//            editJob(event.item)
+//        }
     }
 
-    private fun editJob(job: JobApplication) {
+    private fun editJob(job: JobApplicationResponse) {
 //        if(job == null) {
 //            closeEditor()
 //        }
@@ -59,7 +60,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
 //            dialog.open()
 //        }
 
-        jobForm.setJob(job)
+//        jobForm.setJob(job)
         dialog.open()
 
     }
@@ -72,8 +73,8 @@ class JobListView(private val service: JobService): VerticalLayout() {
     private fun updateList() {
         if (filterField.value.isNullOrEmpty())
             grid.setItems(service.getAllJobs())
-        else
-            grid.setItems(service.findJobsByCompanyName(filterField.value))
+//        else
+//            grid.setItems(service.findJobsByCompanyName(filterField.value))
     }
 
     private fun configureJobForm() {
