@@ -29,4 +29,14 @@ class ApplicationMapper {
         )
     }
 
+    fun toRequest(application: JobApplication): JobApplicationRequest {
+        return JobApplicationRequest(
+            position = application.position,
+            companyName = application.companyName,
+            status = application.status,
+            dateApplied = application.dateApplied,
+            description = application.description
+        )
+    }
+
 }
