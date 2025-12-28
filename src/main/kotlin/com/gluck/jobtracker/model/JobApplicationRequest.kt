@@ -8,12 +8,12 @@ import java.time.LocalDate
 
 data class JobApplicationRequest(
     @NotBlank @NotNull
-    var position: String,
+    var position: String = "",
     @NotNull @NotNull
-    var companyName: String,
+    var companyName: String = "",
     @NotBlank
-    val status: Status,
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
-    val dateApplied: LocalDate?,
-    val description: String?
+    val status: Status = Status.WISH_LIST,
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy") @NotNull
+    var dateApplied: LocalDate? = null,
+    val description: String? = ""
     )
