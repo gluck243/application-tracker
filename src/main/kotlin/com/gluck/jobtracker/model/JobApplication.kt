@@ -28,8 +28,8 @@ class JobApplication(
     var status: Status = Status.WISH_LIST,
 
     @Column(nullable = true)
-    val dateApplied: LocalDate? = null,
+    var dateApplied: LocalDate? = null,
 
     @Lob @Column(nullable = true)
-    val description: String? = ""
+    var description: String? = ""
 ) {}
