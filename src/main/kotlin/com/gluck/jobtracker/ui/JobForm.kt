@@ -1,6 +1,7 @@
 package com.gluck.jobtracker.ui
 
 import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.Status
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.ComponentEventListener
@@ -32,8 +33,9 @@ class JobForm: FormLayout() {
     private val deleteButton = Button(Icon(VaadinIcon.TRASH))
     private val cancelButton = Button(Icon(VaadinIcon.CLOSE))
 
-    private var job = JobApplication()
-    val binder: BeanValidationBinder<JobApplication> = BeanValidationBinder(JobApplication::class.java)
+    private var job = JobApplicationRequest()
+    private var currentJobId: Long? = null
+    val binder: BeanValidationBinder<JobApplicationRequest> = BeanValidationBinder(JobApplicationRequest::class.java)
 
     init {
         status.setItems(Status.entries)
@@ -49,9 +51,11 @@ class JobForm: FormLayout() {
         )
     }
 
-    fun setJob(job: JobApplication?) {
-        this.job = job ?: JobApplication()
+    fun setJob(dto: JobApplicationRequest?, id: Long? = null) {
+        this.job = dto ?: JobApplicationRequest()
+        this.currentJobId = id
         binder.readBean(this.job)
+        deleteButton.isVisible = (id != null)
     }
 
     private fun createButtonsLayout(): Component {
@@ -63,7 +67,7 @@ class JobForm: FormLayout() {
         cancelButton.addClickShortcut(Key.ESCAPE)
 
         saveButton.addClickListener { validateAndSave() }
-        deleteButton.addClickListener { fireEvent(DeleteEvent(this, job))}
+        deleteButton.addClickListener { currentJobId?.let { fireEvent(DeleteEvent(this, it))}}
         cancelButton.addClickListener { fireEvent(CancelEvent(this))}
 
         return HorizontalLayout(saveButton, deleteButton, cancelButton)
@@ -106,7 +110,7 @@ class JobForm: FormLayout() {
     private fun validateAndSave() {
         try {
             binder.writeBean(job)
-            fireEvent(SaveEvent(this, job))
+            fireEvent(SaveEvent(this, job, currentJobId))
         } catch (e: ValidationException) {
             e.printStackTrace()
         }
@@ -117,8 +121,8 @@ class JobForm: FormLayout() {
 
 abstract class JobFormEvent(source: JobForm): com.vaadin.flow.component.ComponentEvent<JobForm>(source, false)
 
-class SaveEvent(source: JobForm, val job: JobApplication): JobFormEvent(source)
+class SaveEvent(source: JobForm, val job: JobApplicationRequest, val jobId: Long?): JobFormEvent(source)
 
-class DeleteEvent(source: JobForm, val job: JobApplication): JobFormEvent(source)
+class DeleteEvent(source: JobForm, val jobId: Long?): JobFormEvent(source)
 
 class CancelEvent(source: JobForm): JobFormEvent(source)

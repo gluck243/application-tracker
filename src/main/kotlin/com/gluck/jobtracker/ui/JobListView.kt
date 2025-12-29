@@ -3,6 +3,7 @@ package com.gluck.jobtracker.ui
 import com.gluck.base.ui.MainLayout
 import com.gluck.jobtracker.service.JobService
 import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.button.Button
@@ -46,21 +47,14 @@ class JobListView(private val service: JobService): VerticalLayout() {
         grid.setColumns("position", "companyName", "status")
         grid.addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
         grid.columns.forEach { it.isAutoWidth = true }
-//        grid.addItemDoubleClickListener { event ->
-//            editJob(event.item)
-//        }
+        grid.addItemDoubleClickListener { event ->
+            editJob(event.item)
+        }
     }
 
-    private fun editJob(job: JobApplicationResponse) {
-//        if(job == null) {
-//            closeEditor()
-//        }
-//        else {
-//            jobForm.setJob(job)
-//            dialog.open()
-//        }
-
-//        jobForm.setJob(job)
+    private fun editJob(dto: JobApplicationResponse) {
+        val requestDto = service.getJobForEdit(dto.id)
+        jobForm.setJob(requestDto, dto.id)
         dialog.open()
 
     }
@@ -70,29 +64,34 @@ class JobListView(private val service: JobService): VerticalLayout() {
         dialog.close()
     }
 
-    private fun updateList() {
-        if (filterField.value.isNullOrEmpty())
-            grid.setItems(service.getAllJobs())
-//        else
-//            grid.setItems(service.findJobsByCompanyName(filterField.value))
-    }
-
     private fun configureJobForm() {
         jobForm.addSaveListener { event ->
-            service.saveJob(event.job)
+            if (event.jobId == null)
+                service.saveJob(event.job)
+            else
+                service.updateJob(event.jobId, event.job)
             updateList()
             closeEditor()
         }
 
         jobForm.addDeleteListener { event ->
-            service.deleteJob(event.job)
-            updateList()
-            closeEditor()
+            if (event.jobId != null) {
+                service.deleteJob(event.jobId)
+                updateList()
+                closeEditor()
+            }
         }
 
         jobForm.addCancelButton {
             closeEditor()
         }
+    }
+
+    private fun updateList() {
+        if (filterField.value.isNullOrEmpty())
+            grid.setItems(service.getAllJobs())
+        else
+            grid.setItems(service.findJobsByCompanyName(filterField.value))
     }
 
     private fun configureDialog() {
@@ -110,7 +109,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
 
     private fun addJob() {
         grid.asSingleSelect().clear()
-        jobForm.setJob(JobApplication())
+        jobForm.setJob(JobApplicationRequest())
         dialog.open()
     }
 
