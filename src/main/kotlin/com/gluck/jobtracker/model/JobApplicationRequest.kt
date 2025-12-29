@@ -11,9 +11,9 @@ data class JobApplicationRequest(
     var position: String = "",
     @NotNull @NotNull
     var companyName: String = "",
-    @NotBlank
-    val status: Status = Status.WISH_LIST,
+    @NotNull
+    var status: Status = Status.WISH_LIST,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy") @NotNull
     var dateApplied: LocalDate? = null,
-    val description: String? = ""
+    var description: String? = ""
     )
