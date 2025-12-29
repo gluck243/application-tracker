@@ -1,6 +1,5 @@
 package com.gluck.jobtracker.service
 
-import com.gluck.jobtracker.model.JobApplication
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.repository.ApplicationRepository
@@ -13,24 +12,36 @@ import java.lang.Exception
 class JobService(private val repository: ApplicationRepository, private val mapper: ApplicationMapper) {
 
     fun getAllJobs(): List<JobApplicationResponse> {
-        val applications = mutableListOf<JobApplicationResponse>()
-        val applicationRecords = repository.findAll()
-        for (application in applicationRecords) {
-            applications.add(mapper.toDTO(application))
-        }
-        return applications
+        val entities = repository.findAll()
+        val responses = entities.map { entity -> mapper.toResponse(entity) }
+        return responses
     }
 
-    fun findJobsByCompanyName(keyword: String): List<JobApplication> {
-        return repository.filterByCompany(keyword)
+    fun findJobsByCompanyName(keyword: String): List<JobApplicationResponse> {
+        val entities = repository.filterByCompany(keyword)
+        val responses = entities.map { entity -> mapper.toResponse(entity) }
+        return responses
     }
 
-    fun saveJob(job: JobApplication) {
+    fun saveJob(request: JobApplicationRequest) {
+        val job = mapper.toEntity(request)
         repository.save(job)
     }
 
-    fun deleteJob(job: JobApplication) {
-        repository.delete(job)
+    fun updateJob(id: Long, request: JobApplicationRequest) {
+        val entity = repository.findById(id).orElseThrow()
+        entity.apply {
+            position = request.position
+            companyName = request.companyName
+            status = request.status
+            dateApplied = request.dateApplied
+            description = request.description
+        }
+        repository.save(entity)
+    }
+
+    fun deleteJob(id: Long) {
+        repository.deleteById(id)
     }
 
     fun getJobForEdit(id: Long): JobApplicationRequest {
