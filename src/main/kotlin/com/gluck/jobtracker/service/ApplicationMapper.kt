@@ -18,7 +18,7 @@ class ApplicationMapper {
         )
     }
 
-    fun toDTO(application: JobApplication): JobApplicationResponse {
+    fun toResponse(application: JobApplication): JobApplicationResponse {
         return JobApplicationResponse(
             id = application.id,
             position = application.position,
