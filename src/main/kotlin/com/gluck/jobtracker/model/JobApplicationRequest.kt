@@ -9,7 +9,7 @@ import java.time.LocalDate
 data class JobApplicationRequest(
     @NotBlank @NotNull
     var position: String = "",
-    @NotNull @NotNull
+    @NotBlank @NotNull
     var companyName: String = "",
     @NotNull
     var status: Status = Status.WISH_LIST,

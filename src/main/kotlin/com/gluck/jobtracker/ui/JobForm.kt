@@ -1,6 +1,5 @@
 package com.gluck.jobtracker.ui
 
-import com.gluck.jobtracker.model.JobApplication
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.Status
 import com.vaadin.flow.component.Component
@@ -20,7 +19,6 @@ import com.vaadin.flow.data.binder.ValidationException
 import com.vaadin.flow.shared.Registration
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 class JobForm: FormLayout() {
 
