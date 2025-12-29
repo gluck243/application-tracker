@@ -23,9 +23,10 @@ class JobService(private val repository: ApplicationRepository, private val mapp
         return responses
     }
 
-    fun saveJob(request: JobApplicationRequest) {
+    fun saveJob(request: JobApplicationRequest): Long {
         val job = mapper.toEntity(request)
-        repository.save(job)
+        val newEntity = repository.save(job)
+        return newEntity.id
     }
 
     fun updateJob(id: Long, request: JobApplicationRequest) {
