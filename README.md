@@ -30,5 +30,6 @@ The primary goal of this project was to practice:
 This project was a great exercise in configuration and language interoperability:
 
 * **Mixed-Language Builds:** I learned how to configure the `kotlin-maven-plugin` to compile Kotlin code before Java, allowing me to call Kotlin classes from Java and vice versa seamlessly.
-* **UI with Vaadin:** Learned how to build fully functional UI with Vaadin utilising such components as Grid, Form, Dialog etc.
+* **UI with Vaadin:** Learned how to build fully functional UI with Vaadin utilizing such components as Grid, Form, Dialog etc.
 * **Clean Code:** Focused on keeping the UI layer logic decoupled both from it's own components and from the JPA layer.
+* **Thorough Testing:** Tests cover all layers (Mapper, Controller, Service, Repository, Integration)
