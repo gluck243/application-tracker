@@ -34,7 +34,7 @@ class JobServiceTest {
     @Test
     fun `should save a job application and return id 4`() {
 
-        val mocks = getMockJob()
+        val mocks = getMockJobs()
         val request = JobApplicationRequest("Software Developer",
             "ABC Ltd.",
             Status.WISH_LIST,
@@ -57,7 +57,7 @@ class JobServiceTest {
     @Test
     fun `should get all jobs`() {
 
-        val mocks = getMockJob()
+        val mocks = getMockJobs()
         val response1 = JobApplicationResponse(4L, "Software Developer", "ABC Ltd.", Status.WISH_LIST, LocalDate.of(2025, 11, 15), null)
         val response2 = JobApplicationResponse(7L, position = "Programmer", companyName = "Google", status = Status.INTERVIEWING, LocalDate.of(2025, 8, 15), null)
 
@@ -76,7 +76,7 @@ class JobServiceTest {
     @Test
     fun `should filter a company name starting with G`() {
 
-        val existingJob = getMockJob()[1]
+        val existingJob = getMockJobs()[1]
         val response2 = JobApplicationResponse(7L,
             position = "Programmer",
             companyName = "Google",
@@ -100,7 +100,7 @@ class JobServiceTest {
     @Test
     fun `should update existing entity from request`() {
 
-        val existingJob = getMockJob()[0]
+        val existingJob = getMockJobs()[0]
         val updateRequest = JobApplicationRequest(
             "Senior Full-stack Developer",
             "ABC Ltd.",
@@ -145,7 +145,7 @@ class JobServiceTest {
     @Test
     fun `should delete job`() {
 
-        val existingJob = getMockJob()[0]
+        val existingJob = getMockJobs()[0]
 
         whenever(repository.findById(4L)).thenReturn(Optional.of(existingJob))
 
@@ -173,7 +173,7 @@ class JobServiceTest {
     @Test
     fun `should find job for editing`() {
 
-        val existingJob = getMockJob()[0]
+        val existingJob = getMockJobs()[0]
         val request = JobApplicationRequest(
             "Software Developer",
             "ABC Ltd.",
@@ -209,7 +209,7 @@ class JobServiceTest {
 
     }
 
-    private fun getMockJob(): List<JobApplicationEntity> {
+    private fun getMockJobs(): List<JobApplicationEntity> {
         val mockJob1 = JobApplicationEntity(4L,
             "Software Developer",
             "ABC Ltd.",
