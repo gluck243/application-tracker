@@ -23,7 +23,7 @@ class JobController(private val service: JobService){
         return ResponseEntity<JobApplicationEntity>.ok(applications)
     }
 
-    @PostMapping("/job")
+    @PostMapping("/jobs")
     fun createJob(@RequestBody @Valid dto: JobApplicationRequest): ResponseEntity<Unit> {
         val newId = service.saveJob(dto)
 

@@ -67,7 +67,7 @@ class JobControllerTest {
 
         whenever(service.saveJob(any())).thenReturn(6L)
 
-        mockMvc.post("/api/job") {
+        mockMvc.post("/api/jobs") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(request)
         }.andExpect {
@@ -88,7 +88,7 @@ class JobControllerTest {
             null
         )
 
-        mockMvc.post("/api/job") {
+        mockMvc.post("/api/jobs") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(invalidRequest)
         }.andExpect {
