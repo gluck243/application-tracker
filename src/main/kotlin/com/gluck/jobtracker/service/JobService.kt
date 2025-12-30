@@ -45,7 +45,7 @@ class JobService(private val repository: ApplicationRepository, private val mapp
         repository.deleteById(id)
     }
 
-    fun getJobForEdit(id: Long): JobApplicationRequest {
+    fun findJob(id: Long): JobApplicationRequest {
         val entity = repository.findById(id).orElseThrow()
         return mapper.toRequest(entity)
     }

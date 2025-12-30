@@ -1,6 +1,6 @@
 package com.gluck.jobtracker.controllers
 
-import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.service.JobService
@@ -20,7 +20,7 @@ class JobController(private val service: JobService){
     @GetMapping("/jobs")
     fun getAllApplications(): ResponseEntity<List<JobApplicationResponse>> {
         val applications = service.getAllJobs()
-        return ResponseEntity<JobApplication>.ok(applications)
+        return ResponseEntity<JobApplicationEntity>.ok(applications)
     }
 
     @PostMapping("/job")

@@ -1,6 +1,6 @@
 package com.gluck.jobtracker.service
 
-import com.gluck.jobtracker.model.JobApplication
+import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import org.springframework.stereotype.Component
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component
 @Component
 class ApplicationMapper {
 
-    fun toEntity(request: JobApplicationRequest): JobApplication {
-        return JobApplication(
+    fun toEntity(request: JobApplicationRequest): JobApplicationEntity {
+        return JobApplicationEntity(
             position = request.position,
             companyName = request.companyName,
             status = request.status,
@@ -18,7 +18,7 @@ class ApplicationMapper {
         )
     }
 
-    fun toResponse(application: JobApplication): JobApplicationResponse {
+    fun toResponse(application: JobApplicationEntity): JobApplicationResponse {
         return JobApplicationResponse(
             id = application.id,
             position = application.position,
@@ -29,7 +29,7 @@ class ApplicationMapper {
         )
     }
 
-    fun toRequest(application: JobApplication): JobApplicationRequest {
+    fun toRequest(application: JobApplicationEntity): JobApplicationRequest {
         return JobApplicationRequest(
             position = application.position,
             companyName = application.companyName,

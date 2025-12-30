@@ -1,6 +1,5 @@
 package com.gluck.jobtracker.model
 
-import com.gluck.jobtracker.model.Status
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Enumerated
@@ -14,7 +13,7 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "job_applications")
-class JobApplication(
+class JobApplicationEntity(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 

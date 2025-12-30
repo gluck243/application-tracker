@@ -2,7 +2,6 @@ package com.gluck.jobtracker.ui
 
 import com.gluck.base.ui.MainLayout
 import com.gluck.jobtracker.service.JobService
-import com.gluck.jobtracker.model.JobApplication
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.vaadin.flow.component.Component
@@ -53,7 +52,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
     }
 
     private fun editJob(dto: JobApplicationResponse) {
-        val requestDto = service.getJobForEdit(dto.id)
+        val requestDto = service.findJob(dto.id)
         jobForm.setJob(requestDto, dto.id)
         dialog.open()
 
