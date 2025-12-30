@@ -42,10 +42,11 @@ class JobService(private val repository: ApplicationRepository, private val mapp
     }
 
     fun deleteJob(id: Long) {
+        repository.findById(id).orElseThrow()
         repository.deleteById(id)
     }
 
-    fun findJob(id: Long): JobApplicationRequest {
+    fun findJobForEditing(id: Long): JobApplicationRequest {
         val entity = repository.findById(id).orElseThrow()
         return mapper.toRequest(entity)
     }

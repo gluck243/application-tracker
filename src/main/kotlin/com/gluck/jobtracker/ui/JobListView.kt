@@ -52,7 +52,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
     }
 
     private fun editJob(dto: JobApplicationResponse) {
-        val requestDto = service.findJob(dto.id)
+        val requestDto = service.findJobForEditing(dto.id)
         jobForm.setJob(requestDto, dto.id)
         dialog.open()
 
