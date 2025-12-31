@@ -10,7 +10,7 @@ The project handles data persistence, business logic, and error handling for a f
 
 ## 🛠️ Tech Stack
 
-* **Core Languages:** Java & Kotlin
+* **Core Languages:** Java 21 & Kotlin 2.2.0
 * **Framework:** Spring Boot 4.0.0
 * **Build Tool:** Maven
 * **Database:** Postgres (Production), H2 (Testing)
