@@ -1,29 +1,29 @@
-# Job Application Tracker
+# 💼 Job Application Tracker
 
-*A practice project exploring Java & Kotlin interoperability with Spring Boot and Vaadin.*
+*A robust backend project exploring modern Java & Kotlin interoperability with Spring Boot and Vaadin.*
 
 ## 📋 Overview
 
-This project was born from a need for a personal job application tracker. Application features a frontend fully built on the backend side of the project using Vaadin, connected to a PostgreSQL database for data persistence.
+This project was born from a need for a personal job application tracker. It serves as a practical exploration of Production-Grade Backend Development, focusing on clean architecture, strict validation, and a comprehensive testing strategy.
 
-The primary goal of this project was to practice:
-* Setting up a mixed-language build environment with **Maven**.
-* Implementing UI build fully on server side utilizing **Vaadin**.
-* Writing clean, maintainable code for a common real-world use case.
+The project handles data persistence, business logic, and error handling for a frontend client (Vaadin), utilizing a full REST API.
 
 ## 🛠️ Tech Stack
 
 * **Core Languages:** Java & Kotlin
 * **Framework:** Spring Boot 4.0.0
 * **Build Tool:** Maven
-* **Database:** Postgres
-* **Testing:** JUnit5 and Mockkito
+* **Database:** Postgres (Production), H2 (Testing)
+* **Testing:** JUnit5, Mockito, Spring Boot Test, MockMvc (Kotlin DSL), AssertJ
+* **CI/CD:** GitHub Actions
 * **User Interface:** Vaadin
 
 ## ✨ Key Features
 
-* **Data Visualization:** Records are fetched straight from a database into a table.
-* **Customization:** Allows for addition of new records and change to existing ones.
+* **Data Visualization:** Records are fetched to the Frontend and are fully customizable.
+* **RESTful API:** Fully compliant REST endpoints for creating, reading, updating, and deleting job applications.
+* **Robust Validation:** Data integrity enforced via Jakarta Validation.
+* **Automated CI Pipeline:** Every push is verified against a complete test suite via GitHub Actions.
 
 ## 🧠 What I Learned
 
@@ -31,5 +31,9 @@ This project was a great exercise in configuration and language interoperability
 
 * **Mixed-Language Builds:** I learned how to configure the `kotlin-maven-plugin` to compile Kotlin code before Java, allowing me to call Kotlin classes from Java and vice versa seamlessly.
 * **UI with Vaadin:** Learned how to build fully functional UI with Vaadin utilizing such components as Grid, Form, Dialog etc.
-* **Clean Code:** Focused on keeping the UI layer logic decoupled both from it's own components and from the JPA layer.
-* **Thorough Testing:** Tests cover all layers (Mapper, Controller, Service, Repository, Integration)
+* **The Testing Pyramid:** I moved beyond simple assertions to build a complete testing strategy:
+    * Unit Tests for Logic & Mappers.
+    * Slice Tests (@WebMvcTest) for the Controller layer.
+    * Integration Tests (@SpringBootTest) for the full database-to-API lifecycle.
+    * Spring Architecture: Strictly decoupled layers to ensure maintainability.
+* **CI/CD Integration:** Configured GitHub Actions to act as a quality gate using Maven.
