@@ -1,6 +1,7 @@
 package com.gluck.jobtracker
 
 import com.gluck.jobtracker.controllers.JobController
+import com.gluck.jobtracker.exception.NoSuchJobFoundException
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.model.Status
@@ -36,7 +37,7 @@ class JobControllerTest {
     @Test
     fun `GET all job applications should return 200 OK`() {
 
-        val mocks = getMockJobs()
+        val mocks = getMockResponses()
 
         whenever(service.getAllJobs()).thenReturn(mocks)
 
@@ -101,7 +102,43 @@ class JobControllerTest {
 
     }
 
-    private fun getMockJobs(): List<JobApplicationResponse> {
+    @Test
+    fun `GET job by id should return 200 OK`() {
+
+        val response = getMockResponses()[0]
+
+        whenever(service.findJobById(response.id)).thenReturn(response)
+
+        mockMvc.get("/api/jobs/${response.id}") {
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonPath("$.id") { value(response.id) }
+            jsonPath("$.companyName") { value(response.companyName) }
+        }.andDo { print() }
+
+    }
+
+    @Test
+    fun `GET job by id should return 404 when job does not exist`() {
+
+        val invalidId = 99L
+        val errorMsg = "No matching job found by $invalidId"
+
+        whenever(service.findJobById(invalidId))
+            .thenThrow(NoSuchJobFoundException(errorMsg))
+
+        mockMvc.get("/api/jobs/${invalidId}") {
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isNotFound() }
+            jsonPath("$.error") { value(errorMsg) }
+        }
+
+    }
+
+    private fun getMockResponses(): List<JobApplicationResponse> {
         val mockJob1 = JobApplicationResponse(4L,
             "Software Developer",
             "ABC Ltd.",
