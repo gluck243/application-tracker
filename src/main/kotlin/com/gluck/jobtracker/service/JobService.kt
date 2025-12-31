@@ -1,5 +1,6 @@
 package com.gluck.jobtracker.service
 
+import com.gluck.jobtracker.exception.NoSuchJobFoundException
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.repository.ApplicationRepository
@@ -42,13 +43,18 @@ class JobService(private val repository: ApplicationRepository, private val mapp
     }
 
     fun deleteJob(id: Long) {
-        repository.findById(id).orElseThrow()
+        repository.findById(id).orElseThrow{ NoSuchJobFoundException("No matching job found for $id") }
         repository.deleteById(id)
     }
 
     fun findJobForEditing(id: Long): JobApplicationRequest {
-        val entity = repository.findById(id).orElseThrow()
+        val entity = repository.findById(id).orElseThrow{ NoSuchJobFoundException("No matching job found for $id") }
         return mapper.toRequest(entity)
+    }
+
+    fun findJobById(id: Long): JobApplicationResponse{
+        val entity = repository.findById(id).orElseThrow{ NoSuchJobFoundException("No matching job found for $id") }
+        return mapper.toResponse(entity)
     }
 
 }
