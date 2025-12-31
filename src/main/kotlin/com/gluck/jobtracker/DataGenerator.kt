@@ -21,13 +21,15 @@ class DataGenerator {
                             position = "Junior Backend Engineer",
                             companyName = "Google",
                             status = Status.APPLIED,
-                            dateApplied = LocalDate.of(2025, 12, 17)
+                            dateApplied = LocalDate.of(2025, 12, 17),
+                            description = "[link], position in Helsinki, credible company"
                         ),
                         JobApplicationEntity(
                             position = "Kotlin Engineer",
                             companyName = "Local Startup N",
                             status = Status.INTERVIEWING,
-                            dateApplied = LocalDate.of(2025, 12, 1)
+                            dateApplied = LocalDate.of(2025, 12, 1),
+                            description = "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
                         ),
                         JobApplicationEntity(
                             position = "Spring Boot Pro",

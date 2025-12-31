@@ -13,6 +13,7 @@ import com.vaadin.flow.component.formlayout.FormLayout
 import com.vaadin.flow.component.icon.Icon
 import com.vaadin.flow.component.icon.VaadinIcon
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
+import com.vaadin.flow.component.textfield.TextArea
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.binder.BeanValidationBinder
 import com.vaadin.flow.data.binder.ValidationException
@@ -26,6 +27,7 @@ class JobForm: FormLayout() {
     private val companyName = TextField("Company Name")
     private val status: ComboBox<Status> = ComboBox("Application status")
     private val dateApplied = DatePicker("Application date")
+    private val description = TextArea("Application description")
 
     private val saveButton = Button(Icon(VaadinIcon.SAFE))
     private val deleteButton = Button(Icon(VaadinIcon.TRASH))
@@ -45,6 +47,7 @@ class JobForm: FormLayout() {
             companyName,
             status,
             setDatePicker(),
+            description,
             createButtonsLayout()
         )
     }

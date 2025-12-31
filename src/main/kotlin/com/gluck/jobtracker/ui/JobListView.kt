@@ -45,6 +45,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
     private fun configureGrid() {
         grid.setColumns("position", "companyName", "status")
         grid.addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
+        grid.addColumn("description")
         grid.columns.forEach { it.isAutoWidth = true }
         grid.addItemDoubleClickListener { event ->
             editJob(event.item)
