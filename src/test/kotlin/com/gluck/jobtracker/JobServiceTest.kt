@@ -1,5 +1,6 @@
 package com.gluck.jobtracker
 
+import com.gluck.jobtracker.exception.NoSuchJobFoundException
 import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
@@ -162,7 +163,7 @@ class JobServiceTest {
 
         whenever(repository.findById(99L)).thenReturn(Optional.empty())
 
-        assertThrows<NoSuchElementException> {
+        assertThrows<NoSuchJobFoundException> {
             service.deleteJob(99L)
         }
 
@@ -201,11 +202,52 @@ class JobServiceTest {
 
         whenever(repository.findById(99L)).thenReturn(Optional.empty())
 
-        assertThrows<NoSuchElementException> {
+        assertThrows<NoSuchJobFoundException> {
             service.findJobForEditing(99L)
         }
 
         verify(mapper, never()).toRequest(any())
+
+    }
+
+    @Test
+    fun `should find job by id`() {
+
+        val existingJob = getMockJobs()[0]
+        val response = JobApplicationResponse(
+            4L,
+            "Software Developer",
+            "ABC Ltd.",
+            Status.WISH_LIST,
+            LocalDate.of(2025, 11, 15),
+            ""
+        )
+
+        whenever(repository.findById(4L)).thenReturn(Optional.of(existingJob))
+        whenever(mapper.toResponse(existingJob)).thenReturn(response)
+
+        val foundJob = service.findJobById(4L)
+
+        assertThat(foundJob)
+            .usingRecursiveComparison()
+            .ignoringFields("id")
+            .isEqualTo(response)
+
+        verify(repository).findById(4L)
+        verify(mapper).toResponse(existingJob)
+
+    }
+
+    @Test
+    fun `should throw exception when finding job by id`() {
+
+        whenever(repository.findById(99L)).thenReturn(Optional.empty())
+
+        assertThrows<NoSuchJobFoundException> {
+            service.findJobById(99L)
+        }
+
+        verify(mapper, never()).toResponse(any())
 
     }
 
