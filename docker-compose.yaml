@@ -16,7 +16,7 @@ services:
     container_name: jobtracker-app
     build: .
     ports:
-      - 8080:8080
+      - "8080:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jobtracker
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
