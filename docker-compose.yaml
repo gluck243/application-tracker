@@ -8,4 +8,23 @@ services:
       POSTGRES_DB: jobtracker
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # For data persistence between resets
+    restart: unless-stopped
+
+  app:
+    container_name: jobtracker-app
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/jobtracker
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - postgres
+    restart: on-failure
+
+volumes:
+  postgres_data:
