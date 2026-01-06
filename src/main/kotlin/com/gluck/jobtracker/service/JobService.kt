@@ -39,8 +39,8 @@ class JobService(private val repository: ApplicationRepository, private val mapp
             dateApplied = request.dateApplied
             description = request.description
         }
-        repository.save(entity)
-        return mapper.toResponse(entity)
+        val updatedEntity = repository.save(entity)
+        return mapper.toResponse(updatedEntity)
     }
 
     fun deleteJob(id: Long) {
