@@ -15,9 +15,10 @@ The project handles data persistence, business logic, and error handling for a f
 * **Core Languages:** Java 21 & Kotlin 2.2.0
 * **Framework:** Spring Boot 4.0.0
 * **Build Tool:** Maven
-* **Database:** Postgres (Production), H2 (Testing)
+* **Database:** Postgres (Production & Testing)
 * **Testing:** JUnit5, Mockito, Spring Boot Test, MockMvc (Kotlin DSL), AssertJ
-* **CI/CD:** GitHub Actions
+* **CI:** GitHub Actions
+* **Containerization:** Docker
 * **User Interface:** Vaadin
 
 ## ✨ Key Features
