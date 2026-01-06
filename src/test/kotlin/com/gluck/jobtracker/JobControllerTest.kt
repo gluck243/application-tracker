@@ -2,6 +2,7 @@ package com.gluck.jobtracker
 
 import com.gluck.jobtracker.controllers.JobController
 import com.gluck.jobtracker.exception.NoSuchJobFoundException
+import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.model.Status
@@ -9,6 +10,8 @@ import com.gluck.jobtracker.service.JobService
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.check
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -20,7 +23,9 @@ import tools.jackson.databind.ObjectMapper
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
 import java.time.LocalDate
+import kotlin.test.assertEquals
 
 @WebMvcTest(JobController::class)
 class JobControllerTest {
@@ -135,6 +140,39 @@ class JobControllerTest {
             status { isNotFound() }
             jsonPath("$.error") { value(errorMsg) }
         }
+
+    }
+
+    @Test
+    fun `PUT job by id should update existing job and return it`() {
+
+        val request = JobApplicationRequest(
+            "Software Developer",
+            "ABC Ltd.",
+            Status.WISH_LIST,
+            LocalDate.of(2025, 11, 15),
+            null
+        )
+        val response = getMockResponses()[0]
+
+        whenever(service.updateJobById(eq(response.id), any())).thenReturn(response)
+
+        mockMvc.put("/api/jobs/${response.id}") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(request)
+        }.andExpect {
+            status { isOk() }
+            content { contentType(MediaType.APPLICATION_JSON) }
+            jsonPath("$.position") { value(response.position) }
+            jsonPath("$.companyName") { value(response.companyName) }
+            jsonPath("$.status") { value(response.status.toString()) }
+        }.andDo { print() }
+
+        verify(service).updateJobById(eq(response.id), check { serviceArg ->
+            assertEquals(request.companyName, serviceArg.companyName)
+            assertEquals(request.position, serviceArg.position)
+        })
 
     }
 
