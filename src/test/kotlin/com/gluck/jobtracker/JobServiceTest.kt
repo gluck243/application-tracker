@@ -110,16 +110,18 @@ class JobServiceTest {
         )
 
         whenever(repository.findById(4L)).thenReturn(Optional.of(existingJob))
-        whenever(repository.save(existingJob)).thenReturn(existingJob)
+        whenever(repository.save(any())).thenReturn(existingJob)
 
         service.updateJobById(4L, updateRequest)
 
         val inOrder = inOrder(repository)
         inOrder.verify(repository).findById(4L)
-        inOrder.verify(repository).save(existingJob)
 
-        assertEquals("Senior Full-stack Developer", existingJob.position)
-        assertEquals(Status.INTERVIEWING, existingJob.status)
+        verify(repository).save(check { savedJob ->
+            assertThat(savedJob.position).isEqualTo(updateRequest.position)
+            assertThat(savedJob.status).isEqualTo(updateRequest.status)
+            assertThat(savedJob.id).isEqualTo(4L)
+        })
 
     }
 
