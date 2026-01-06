@@ -112,7 +112,7 @@ class JobServiceTest {
         whenever(repository.findById(4L)).thenReturn(Optional.of(existingJob))
         whenever(repository.save(existingJob)).thenReturn(existingJob)
 
-        service.updateJob(4L, updateRequest)
+        service.updateJobById(4L, updateRequest)
 
         val inOrder = inOrder(repository)
         inOrder.verify(repository).findById(4L)
@@ -136,7 +136,7 @@ class JobServiceTest {
         whenever(repository.findById(99L)).thenReturn(Optional.empty())
 
         assertThrows<NoSuchElementException> {
-            service.updateJob(99L, updateRequest)
+            service.updateJobById(99L, updateRequest)
         }
 
         verify(repository, never()).save(any())

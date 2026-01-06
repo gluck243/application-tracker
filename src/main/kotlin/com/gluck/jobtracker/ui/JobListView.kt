@@ -69,7 +69,7 @@ class JobListView(private val service: JobService): VerticalLayout() {
             if (event.jobId == null)
                 service.saveJob(event.job)
             else
-                service.updateJob(event.jobId, event.job)
+                service.updateJobById(event.jobId, event.job)
             updateList()
             closeEditor()
         }
