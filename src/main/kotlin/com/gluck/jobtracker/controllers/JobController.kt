@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -43,6 +44,12 @@ class JobController(private val service: JobService){
     fun getJobById(@PathVariable id: Long): ResponseEntity<JobApplicationResponse> {
         val foundEntity = service.findJobById(id)
         return ResponseEntity<JobApplicationResponse>.ok(foundEntity)
+    }
+
+    @PutMapping("/jobs/{id}")
+    fun updateJobById(@PathVariable id: Long, @RequestBody @Valid dto: JobApplicationRequest): ResponseEntity<JobApplicationResponse> {
+        val updatedEntity = service.updateJobById(id, dto)
+        return ResponseEntity<JobApplicationResponse>.ok(updatedEntity)
     }
 
 }
