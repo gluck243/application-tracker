@@ -137,7 +137,7 @@ class JobServiceTest {
 
         whenever(repository.findById(99L)).thenReturn(Optional.empty())
 
-        assertThrows<NoSuchElementException> {
+        assertThrows<NoSuchJobFoundException> {
             service.updateJobById(99L, updateRequest)
         }
 
