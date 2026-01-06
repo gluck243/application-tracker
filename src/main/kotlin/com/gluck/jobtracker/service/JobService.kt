@@ -30,8 +30,8 @@ class JobService(private val repository: ApplicationRepository, private val mapp
         return newEntity.id
     }
 
-    fun updateJob(id: Long, request: JobApplicationRequest) {
-        val entity = repository.findById(id).orElseThrow()
+    fun updateJobById(id: Long, request: JobApplicationRequest): JobApplicationResponse {
+        val entity = repository.findById(id).orElseThrow{ NoSuchJobFoundException("No matching job found for $id") }
         entity.apply {
             position = request.position
             companyName = request.companyName
@@ -40,6 +40,7 @@ class JobService(private val repository: ApplicationRepository, private val mapp
             description = request.description
         }
         repository.save(entity)
+        return mapper.toResponse(entity)
     }
 
     fun deleteJob(id: Long) {
