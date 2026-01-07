@@ -2,7 +2,6 @@ package com.gluck.jobtracker
 
 import com.gluck.jobtracker.controllers.JobController
 import com.gluck.jobtracker.exception.NoSuchJobFoundException
-import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.model.Status
@@ -13,6 +12,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.check
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +21,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import tools.jackson.databind.ObjectMapper
 import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
@@ -175,7 +176,64 @@ class JobControllerTest {
         })
 
     }
-    // Implement test for put endpoint failure
+
+    @Test
+    fun `PUT job by id should return 404 when job does not exist`() {
+
+        val invalidId = 99L
+        val errorMsg = "No matching job found by $invalidId"
+        val request = JobApplicationRequest(
+            "Software Developer",
+            "ABC Ltd.",
+            Status.WISH_LIST,
+            LocalDate.of(2025, 11, 15),
+            null
+        )
+
+        whenever(service.updateJobById(eq(invalidId), any()))
+            .thenThrow(NoSuchJobFoundException(errorMsg))
+
+        mockMvc.put("/api/jobs/${invalidId}") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(request)
+        }.andExpect {
+            status { isNotFound() }
+            jsonPath("$.error") { value(errorMsg) }
+        }
+
+    }
+
+    @Test
+    fun `DELETE job by id should delete job and return NO CONTENT`() {
+        val response = getMockResponses()[0]
+
+        mockMvc.delete("/api/jobs/${response.id}") {
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isNoContent() }
+        }.andDo { print() }
+
+        verify(service, times(1)).deleteJob(response.id)
+    }
+
+    @Test
+    fun `DELETE job by id should return 404 when job does not exist`() {
+
+        val invalidId = 99L
+        val errorMsg = "No matching job found by $invalidId"
+
+        whenever(service.deleteJob(invalidId))
+            .thenThrow(NoSuchJobFoundException(errorMsg))
+
+        mockMvc.delete("/api/jobs/${invalidId}") {
+            accept = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isNotFound() }
+            jsonPath("$.error") { value(errorMsg) }
+        }
+
+    }
 
     private fun getMockResponses(): List<JobApplicationResponse> {
         val mockJob1 = JobApplicationResponse(4L,
