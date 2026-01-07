@@ -24,7 +24,7 @@ class JobController(private val service: JobService){
     @GetMapping("/jobs")
     fun getAllApplications(): ResponseEntity<List<JobApplicationResponse>> {
         val applications = service.getAllJobs()
-        return ResponseEntity<JobApplicationEntity>.ok(applications)
+        return ResponseEntity.ok(applications)
     }
 
     @PostMapping("/jobs")
@@ -37,19 +37,19 @@ class JobController(private val service: JobService){
             .buildAndExpand(newId)
             .toUri()
 
-        return ResponseEntity<Unit>.created(location).build()
+        return ResponseEntity.created(location).build()
     }
 
     @GetMapping("/jobs/{id}")
     fun getJobById(@PathVariable id: Long): ResponseEntity<JobApplicationResponse> {
         val foundEntity = service.findJobById(id)
-        return ResponseEntity<JobApplicationResponse>.ok(foundEntity)
+        return ResponseEntity.ok(foundEntity)
     }
 
     @PutMapping("/jobs/{id}")
     fun updateJobById(@PathVariable id: Long, @RequestBody @Valid dto: JobApplicationRequest): ResponseEntity<JobApplicationResponse> {
         val updatedEntity = service.updateJobById(id, dto)
-        return ResponseEntity<JobApplicationResponse>.ok(updatedEntity)
+        return ResponseEntity.ok(updatedEntity)
     }
 
 }
