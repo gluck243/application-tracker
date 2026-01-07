@@ -2,6 +2,8 @@
 
 [![Application Tracker CI with Maven](https://github.com/gluck243/application-tracker/actions/workflows/ci.yaml/badge.svg)](https://github.com/gluck243/application-tracker/actions/workflows/ci.yaml)
 
+## [>>>Try application here<<<](https://job-application-tracker.up.railway.app/)
+
 *A robust backend project exploring modern Java & Kotlin interoperability with Spring Boot and Vaadin.*
 
 ## 📋 Overview
