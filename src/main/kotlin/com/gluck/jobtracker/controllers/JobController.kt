@@ -1,19 +1,17 @@
 package com.gluck.jobtracker.controllers
 
-import com.gluck.jobtracker.exception.NoSuchJobFoundException
-import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.service.JobService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
@@ -50,6 +48,12 @@ class JobController(private val service: JobService){
     fun updateJobById(@PathVariable id: Long, @RequestBody @Valid dto: JobApplicationRequest): ResponseEntity<JobApplicationResponse> {
         val updatedEntity = service.updateJobById(id, dto)
         return ResponseEntity.ok(updatedEntity)
+    }
+
+    @DeleteMapping("jobs/{id}")
+    fun deleteJobById(@PathVariable id: Long): ResponseEntity<Unit> {
+        service.deleteJob(id)
+        return ResponseEntity.noContent().build()
     }
 
 }
