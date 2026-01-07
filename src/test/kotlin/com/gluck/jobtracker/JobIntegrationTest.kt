@@ -12,8 +12,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.put
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
 import java.time.LocalDate
@@ -69,16 +72,23 @@ class JobIntegrationTest {
     }
 
     @Test
-    fun `should create job application`() {
+    fun `should create, get, update and delete a job application`() {
 
         val request = JobApplicationRequest(
             "Programmer",
             "Google",
             Status.INTERVIEWING,
+            LocalDate.of(2025, 8, 15)
+        )
+        val updateRequest = JobApplicationRequest(
+            "Super Programmer",
+            "ABC Ltd.",
+            Status.OFFER,
             LocalDate.of(2025, 8, 15),
+            "DATA ADDED VIA TEST"
         )
 
-        val result = mockMvc.post("/api/jobs") {
+        val postResult = mockMvc.post("/api/jobs") {
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(request)
         }.andExpect {
@@ -87,20 +97,40 @@ class JobIntegrationTest {
         }.andReturn()
 
         val jobs = repository.findAll()
-
         assertEquals(1, jobs.size)
-        assertEquals("Programmer", jobs[0].position)
-        assertEquals("Google", jobs[0].companyName)
+        val savedId = jobs[0].id
 
+        val locationHeader = postResult.response.getHeader("Location")
+        assertTrue(locationHeader!!.endsWith("/$savedId"))
 
-        val locationHeader = result.response.getHeader("Location")
-        assertTrue(locationHeader!!.endsWith("/" + jobs[0].id))
+        mockMvc.get("/api/jobs/$savedId") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.position") { value("Programmer") }
+            jsonPath("$.companyName") { value("Google") }
+        }
+
+        mockMvc.put("/api/jobs/$savedId") {
+            accept = MediaType.APPLICATION_JSON
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(updateRequest)
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$.position") { value("Super Programmer") }
+            jsonPath("$.companyName") { value("ABC Ltd.") }
+            jsonPath("$.status") { value(Status.OFFER.name) }
+            jsonPath("$.description") { value("DATA ADDED VIA TEST").toString() }
+        }
+
+        mockMvc.delete("/api/jobs/$savedId") {
+        }.andExpect {
+            status { isNoContent() }
+        }
+
+        assertTrue(repository.findById(savedId).isEmpty)
+        assertEquals(repository.count(), 0)
 
     }
-
-//    @Test
-//    fun `should delete user successfully`() {
-//
-//    }
 
 }
