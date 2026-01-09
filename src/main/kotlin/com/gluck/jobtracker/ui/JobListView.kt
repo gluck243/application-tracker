@@ -31,7 +31,7 @@ class JobListView(private val service: JobService, private val securityService: 
     private val jobForm = JobForm()
     private val dialog = Dialog("Job Application Information")
     private val addJobButton = Button("Add Job")
-    private val filterField = TextField()
+    private val filterField = TextField("Search by Company name")
     private val login = Button("Login")
     private val logout = Button("Logout")
 
