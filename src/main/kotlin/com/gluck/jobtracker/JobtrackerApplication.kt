@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-@StyleSheet(Lumo.STYLESHEET) // Use Aura.STYLESHEET to use Aura instead
+@StyleSheet(Lumo.STYLESHEET)
 @StyleSheet(Lumo.UTILITY_STYLESHEET)
-@StyleSheet("styles.css") // Your custom styles
+@StyleSheet("styles.css")
 class JobtrackerApplication
 
     fun main(args: Array<String>) {

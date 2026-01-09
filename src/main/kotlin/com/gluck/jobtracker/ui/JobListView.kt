@@ -11,6 +11,8 @@ import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
 import com.vaadin.flow.component.html.H1
+import com.vaadin.flow.component.html.H2
+import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
@@ -40,7 +42,6 @@ class JobListView(private val service: JobService, private val securityService: 
         configureDialog()
         configureJobForm()
         add(
-            H1("My Job Applications"),
             getToolbar(),
             getFilterField(),
             grid
@@ -108,17 +109,36 @@ class JobListView(private val service: JobService, private val securityService: 
 
     private fun getToolbar(): Component {
         val toolbar = HorizontalLayout()
+        toolbar.apply {
+            setWidthFull()
+            addClassName("toolbar")
+            defaultVerticalComponentAlignment = FlexComponent.Alignment.CENTER
+            justifyContentMode = FlexComponent.JustifyContentMode.BETWEEN
+        }
+
+        val title = H2("Job Tracker")
+        title.style.set("margin", "0")
+
+        val actions = HorizontalLayout()
+
         if (securityService.getAuthenticatedUser().isPresent) {
             logout.addClickListener { securityService.logout() }
             addJobButton.addClickListener { addJob() }
-            toolbar.add(addJobButton, logout)
+            actions.add(addJobButton, logout)
+        }
 
-        } else {
+        else {
             login.addClickListener {
                 UI.getCurrent().navigate(LoginView::class.java)
             }
-            toolbar.add(login)
+            actions.add(login)
         }
+
+        toolbar.add(title, actions)
+
+        toolbar.style.set("background-color", "#f5f5f5")
+        toolbar.style.set("padding", "10px 20px")
+
         return toolbar
     }
 

@@ -1,5 +1,7 @@
 package com.gluck.jobtracker.ui
 
+import com.vaadin.flow.component.html.Span
+import com.vaadin.flow.component.login.LoginI18n
 import com.vaadin.flow.component.login.LoginOverlay
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.router.BeforeEnterEvent
@@ -20,11 +22,36 @@ class LoginView: VerticalLayout(), BeforeEnterObserver {
     }
 
     init {
+        val i18n = LoginI18n.createDefault()
+
+        i18n.apply {
+            form.apply {
+                username = "Username"
+                password = "Password"
+                submit = "Sign In"
+                forgotPassword = "Lost access?"
+            }
+
+            errorMessage.apply {
+                title = "Access Denied"
+                message = "Check your Caps Lock or password"
+            }
+        }
+
+        val footerText = Span("Don't have an account? Too bad, it's invite only")
+        footerText.apply {
+            style.set("font-size", "var(--lumo-font-size-xs)")
+            style.set("color", "var(--lumo-secondary-text-color)")
+        }
+
         loginOverlay.apply {
+            setTitle("Job Application Tracker")
+            description = "Please log in to manage your applications."
+            setI18n(i18n)
+            footer.add(footerText)
+            isForgotPasswordButtonVisible = false
             isOpened = true
             action = "login"
-            setTitle("Job Application Tracker")
-            description = "Log in to edit records"
         }
     }
 
