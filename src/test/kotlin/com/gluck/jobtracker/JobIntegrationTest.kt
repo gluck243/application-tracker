@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
@@ -21,8 +24,8 @@ import tools.jackson.databind.ObjectMapper
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
 
-/*
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -72,6 +75,7 @@ class JobIntegrationTest {
     }
 
     @Test
+    // @WithMockUser(username = "admin", roles = ["ROLE_ADMIN"])
     fun `should create, get, update and delete a job application`() {
 
         val request = JobApplicationRequest(
@@ -89,6 +93,8 @@ class JobIntegrationTest {
         )
 
         val postResult = mockMvc.post("/api/jobs") {
+            with(user("admin").authorities(SimpleGrantedAuthority("ROLE_ADMIN")))
+            with(csrf())
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(request)
         }.andExpect {
@@ -112,6 +118,8 @@ class JobIntegrationTest {
         }
 
         mockMvc.put("/api/jobs/$savedId") {
+            with(user("admin").authorities(SimpleGrantedAuthority("ROLE_ADMIN")))
+            with(csrf())
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(updateRequest)
@@ -124,6 +132,8 @@ class JobIntegrationTest {
         }
 
         mockMvc.delete("/api/jobs/$savedId") {
+            with(user("admin").authorities(SimpleGrantedAuthority("ROLE_ADMIN")))
+            with(csrf())
         }.andExpect {
             status { isNoContent() }
         }
@@ -133,4 +143,4 @@ class JobIntegrationTest {
 
     }
 
-}*/
+}
