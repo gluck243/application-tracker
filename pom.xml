@@ -131,11 +131,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-test -->
         <dependency>
-            <groupId>com.github.appreciated</groupId>
-            <artifactId>apexcharts</artifactId>
-            <version>24.0.2</version>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.appreciated</groupId>-->
+<!--            <artifactId>apexcharts</artifactId>-->
+<!--            <version>24.0.2</version>-->
+<!--        </dependency>-->
     </dependencies>
     
     <build>
