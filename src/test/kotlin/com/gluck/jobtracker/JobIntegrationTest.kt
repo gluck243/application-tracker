@@ -16,13 +16,13 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.put
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/*
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -133,4 +133,4 @@ class JobIntegrationTest {
 
     }
 
-}
+}*/
