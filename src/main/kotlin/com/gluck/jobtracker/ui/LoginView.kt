@@ -23,6 +23,8 @@ class LoginView: VerticalLayout(), BeforeEnterObserver {
         loginOverlay.apply {
             isOpened = true
             action = "login"
+            setTitle("Job Application Tracker")
+            description = "Log in to edit records"
         }
     }
 
