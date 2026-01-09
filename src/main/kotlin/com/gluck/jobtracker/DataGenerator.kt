@@ -2,11 +2,16 @@ package com.gluck.jobtracker
 
 import com.gluck.jobtracker.model.JobApplicationEntity
 import com.gluck.jobtracker.model.Status
+import com.gluck.jobtracker.model.UserEntity
 import com.gluck.jobtracker.repository.ApplicationRepository
+import com.gluck.jobtracker.repository.UserRepository
+import com.vaadin.copilot.shaded.bouncycastle.crypto.generators.BCrypt
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDate
+import kotlin.uuid.Uuid
 
 @Configuration
 class DataGenerator {
@@ -40,6 +45,22 @@ class DataGenerator {
                     )
                 )
                 println("Generated demo data for the job tracker.")
+            }
+        }
+    }
+
+    @Bean
+    fun loadUserData(repository: UserRepository, passwordEncoder: PasswordEncoder): CommandLineRunner {
+        return CommandLineRunner {
+            if (repository.findByUsername("admin") == null) {
+                repository.save(
+                    UserEntity(
+                        username = "admin",
+                        password = passwordEncoder.encode("superPassword")!!, // I know it shouldn't be here
+                        role = "ADMIN"                                                      // I am working on keeping it a secret
+                    )
+                )
+                println("Generated ADMIN user.")
             }
         }
     }
