@@ -4,7 +4,9 @@ import com.gluck.base.ui.MainLayout
 import com.gluck.jobtracker.service.JobService
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
+import com.gluck.jobtracker.service.SecurityService
 import com.vaadin.flow.component.Component
+import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
@@ -16,16 +18,20 @@ import com.vaadin.flow.data.renderer.LocalDateRenderer
 import com.vaadin.flow.data.value.ValueChangeMode
 import com.vaadin.flow.router.Menu
 import com.vaadin.flow.router.Route
+import com.vaadin.flow.server.auth.AnonymousAllowed
 
 @Route(value = "", layout = MainLayout::class)
+@AnonymousAllowed
 @Menu(title = "Applications", order = 1.0, icon = "vaadin:dashboard")
-class JobListView(private val service: JobService): VerticalLayout() {
+class JobListView(private val service: JobService, private val securityService: SecurityService): VerticalLayout() {
 
     private val grid = Grid(JobApplicationResponse::class.java)
     private val jobForm = JobForm()
     private val dialog = Dialog("Job Application Information")
-    val filterField = TextField()
-
+    private val addJobButton = Button("Add Job")
+    private val filterField = TextField()
+    private val login = Button("Login")
+    private val logout = Button("Logout")
 
     init {
         addClassName("list-view")
@@ -47,8 +53,10 @@ class JobListView(private val service: JobService): VerticalLayout() {
         grid.addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
         grid.addColumn("description")
         grid.columns.forEach { it.isAutoWidth = true }
-        grid.addItemDoubleClickListener { event ->
-            editJob(event.item)
+        if (securityService.getAuthenticatedUser().isPresent) {
+            grid.addItemDoubleClickListener { event ->
+                editJob(event.item)
+            }
         }
     }
 
@@ -99,12 +107,19 @@ class JobListView(private val service: JobService): VerticalLayout() {
     }
 
     private fun getToolbar(): Component {
-        val addJobButton = Button("Add Job")
-        addJobButton.addClickListener {
-            addJob()
-        }
+        val toolbar = HorizontalLayout()
+        if (securityService.getAuthenticatedUser().isPresent) {
+            logout.addClickListener { securityService.logout() }
+            addJobButton.addClickListener { addJob() }
+            toolbar.add(addJobButton, logout)
 
-        return HorizontalLayout(addJobButton)
+        } else {
+            login.addClickListener {
+                UI.getCurrent().navigate(LoginView::class.java)
+            }
+            toolbar.add(login)
+        }
+        return toolbar
     }
 
     private fun addJob() {

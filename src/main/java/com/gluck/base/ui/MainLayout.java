@@ -12,11 +12,13 @@ import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.Layout;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 @Layout
+@AnonymousAllowed
 public final class MainLayout extends AppLayout {
 
     MainLayout() {
@@ -25,12 +27,11 @@ public final class MainLayout extends AppLayout {
     }
 
     private Component createHeader() {
-        // TODO Replace with real application logo and name
         var appLogo = VaadinIcon.CUBES.create();
         appLogo.setSize("48px");
         appLogo.setColor("green");
 
-        var appName = new Span("My Application");
+        var appName = new Span("Job Application Tracker");
         appName.getStyle().setFontWeight(Style.FontWeight.BOLD);
 
         var header = new VerticalLayout(appLogo, appName);
