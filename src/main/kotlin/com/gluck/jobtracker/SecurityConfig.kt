@@ -31,11 +31,13 @@ class SecurityConfig {
         http.csrf { it.disable() }
 
         http.authorizeHttpRequests { c ->
-            c.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+            c.requestMatchers(HttpMethod.GET, "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             c.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
             c.requestMatchers("/api/**").hasRole("ADMIN")
             c.requestMatchers("/**").permitAll()
         }
+
+        // http.httpBasic {}
 
         http.with(vaadin()) { v ->
             v.loginView(LoginView::class.java)
