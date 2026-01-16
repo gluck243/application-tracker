@@ -1,11 +1,11 @@
 package com.gluck.jobtracker.exception
 
+import com.gluck.jobtracker.model.ApiErrorResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
-import kotlin.math.max
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -23,9 +23,10 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchJobFoundException::class)
-    fun handleNoSuchJobException(ex: NoSuchJobFoundException): ResponseEntity<Map<String, String>> {
+    fun handleNoSuchJobException(ex: NoSuchJobFoundException): ResponseEntity<ApiErrorResponse> {
 
-        return ResponseEntity<Map<String, String>>(mapOf("error" to ex.message), HttpStatus.NOT_FOUND)
+        val errorResponse = ApiErrorResponse(ex.message ?: "Unknown error")
+        return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
 
     }
 
