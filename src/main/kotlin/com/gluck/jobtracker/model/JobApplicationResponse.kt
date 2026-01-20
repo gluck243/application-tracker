@@ -25,8 +25,7 @@ class JobApplicationResponse(
     val companyName: String,
 
     @field:Schema(
-        description = "Status of an application",
-        examples = ["WISH_LIST", "APPLIED", "GHOSTED", "REJECTED", "INTERVIEWING", "OFFER"],
+        description = "Status of an application"
     )
     val status: Status,
 

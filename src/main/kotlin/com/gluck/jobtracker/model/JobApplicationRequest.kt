@@ -27,7 +27,6 @@ data class JobApplicationRequest(
     @NotNull
     @field:Schema(
         description = "Status of an application",
-        examples = ["WISH_LIST", "APPLIED", "GHOSTED", "REJECTED", "INTERVIEWING", "OFFER"],
         required = true
     )
     var status: Status = Status.WISH_LIST,

@@ -94,6 +94,7 @@ class JobController(private val service: JobService) {
         ApiResponse(responseCode = "404", description = "Job application by provided id is not found and wasn't updated",
             content = [Content(mediaType = "application/json",
                 schema = Schema(implementation = ApiErrorResponse::class))]),
+
         ApiResponse(responseCode = "400", description = "Bad request. Check correctness of provided request")
     ])
     @PutMapping("/jobs/{id}")
