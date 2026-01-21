@@ -42,6 +42,8 @@ The project handles data persistence, business logic, and error handling for a f
     ```.env
     POSTGRES_USER=your_username
     POSTGRES_PASSWORD=your_password
+    ADMIN_USER=your_username
+    ADMIN_PASSWORD=your_password
     ```
 3.  Build the application:
     ```bash
