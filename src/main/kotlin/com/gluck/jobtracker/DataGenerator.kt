@@ -15,10 +15,10 @@ import java.time.LocalDate
 @Configuration
 class DataGenerator {
 
-    @Value("{admin.username}")
+    @Value("\${admin.username}")
     private lateinit var adminUser: String
 
-    @Value("{admin.password}")
+    @Value("\${admin.password}")
     private lateinit var adminPass: String
 
     @Bean
