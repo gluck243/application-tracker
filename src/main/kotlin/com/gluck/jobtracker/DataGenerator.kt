@@ -57,7 +57,7 @@ class DataGenerator {
     @Bean
     fun loadUserData(repository: UserRepository, passwordEncoder: PasswordEncoder): CommandLineRunner {
         return CommandLineRunner {
-            if (repository.findByUsername("admin") == null) {
+            if (repository.findByUsername(adminUser) == null) {
                 repository.save(
                     UserEntity(
                         username = adminUser,
@@ -66,6 +66,9 @@ class DataGenerator {
                     )
                 )
                 println("Generated ADMIN user.")
+            }
+            else {
+                println("User $adminUser already generated. Skipping")
             }
         }
     }
