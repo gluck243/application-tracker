@@ -65,11 +65,11 @@ class JobIntegrationTest {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
-            jsonPath("$.length()") {value(2)}
-            jsonPath("$[0].position") {value("Software Developer")}
-            jsonPath("$[0].status") {value("WISH_LIST")}
-            jsonPath("$[1].dateApplied") {value("15.08.2025")}
-            jsonPath("$[1].companyName") {value("Google")}
+            jsonPath("$.content.length()") {value(2)}
+            jsonPath("$.content[0].position") {value("Software Developer")}
+            jsonPath("$.content[0].status") {value("WISH_LIST")}
+            jsonPath("$.content[1].dateApplied") {value("15.08.2025")}
+            jsonPath("$.content[1].companyName") {value("Google")}
         }
 
     }

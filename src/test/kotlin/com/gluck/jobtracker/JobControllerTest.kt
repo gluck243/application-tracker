@@ -17,6 +17,8 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import tools.jackson.databind.ObjectMapper
@@ -45,18 +47,22 @@ class JobControllerTest {
 
         val mocks = getMockResponses()
 
-        whenever(service.getAllJobs()).thenReturn(mocks)
+        val pageOfMocks = PageImpl(mocks)
+
+        whenever(service.getJobs(any(), org.mockito.kotlin.anyOrNull())).thenReturn(pageOfMocks)
 
         mockMvc.get("/api/jobs") {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonPath("$.length()") {value(2)}
-            jsonPath("$[0].id") {value(4)}
-            jsonPath("$[0].position") {value("Software Developer")}
-            jsonPath("$[1].dateApplied") {value("15.08.2025")}
-            jsonPath("$[1].companyName") {value("Google")}
+
+            jsonPath("$.content.length()") { value(2) }
+            jsonPath("$.content[0].id") { value(4) }
+            jsonPath("$.content[0].position") { value("Software Developer") }
+            jsonPath("$.content[1].dateApplied") { value("15.08.2025") }
+            jsonPath("$.content[1].companyName") { value("Google") }
+            jsonPath("$.totalElements") { value(2) }
         }.andDo { print() }
 
     }

@@ -7,6 +7,7 @@ import com.gluck.jobtracker.repository.ApplicationRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
+import org.springframework.data.domain.PageRequest
 import kotlin.test.assertEquals
 
 @DataJpaTest
@@ -21,14 +22,13 @@ class ApplicationRepositoryTest {
         val record2 = JobApplicationEntity(position = "Programmer", companyName = "Google", status = Status.INTERVIEWING)
         val record3 = JobApplicationEntity(position = "Code Pro", companyName = "Bongo", status = Status.APPLIED)
 
-        repository.save(record1)
-        repository.save(record2)
-        repository.save(record3)
+        repository.saveAll(listOf(record1, record2, record3))
 
-        val filterResult = repository.filterByCompany("goo")
+        val filterResult = repository.searchByCompany("goo", PageRequest.of(0, 10))
 
-        assertEquals(filterResult.size, 1)
-        assertEquals(filterResult[0].companyName, "Google")
+        assertEquals(1, filterResult.totalElements)
+
+        assertEquals("Google", filterResult.content[0].companyName)
     }
 
 }
