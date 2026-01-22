@@ -25,10 +25,12 @@ import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user
+import org.springframework.test.context.TestPropertySource
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@TestPropertySource(properties = ["vaadin.productionMode=false", "admin.username=test_admin", "admin.password=test_pass"])
 class JobIntegrationTest {
 
     @Autowired
@@ -75,7 +77,6 @@ class JobIntegrationTest {
     }
 
     @Test
-    // @WithMockUser(username = "admin", roles = ["ROLE_ADMIN"])
     fun `should create, get, update and delete a job application`() {
 
         val request = JobApplicationRequest(
