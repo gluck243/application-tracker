@@ -8,7 +8,7 @@ COPY .mvn .mvn
 RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline
 COPY src src
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -Pproduction -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 
