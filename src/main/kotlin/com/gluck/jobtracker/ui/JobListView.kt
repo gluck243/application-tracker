@@ -10,17 +10,21 @@ import com.vaadin.flow.component.UI
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.dialog.Dialog
 import com.vaadin.flow.component.grid.Grid
-import com.vaadin.flow.component.html.H1
 import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.textfield.TextField
+import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider
+import com.vaadin.flow.data.provider.DataProvider
+import com.vaadin.flow.data.provider.Query
 import com.vaadin.flow.data.renderer.LocalDateRenderer
 import com.vaadin.flow.data.value.ValueChangeMode
 import com.vaadin.flow.router.Menu
 import com.vaadin.flow.router.Route
 import com.vaadin.flow.server.auth.AnonymousAllowed
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 
 @Route(value = "", layout = MainLayout::class)
 @AnonymousAllowed
@@ -34,6 +38,7 @@ class JobListView(private val service: JobService, private val securityService: 
     private val filterField = TextField("Search by Company name")
     private val login = Button("Login")
     private val logout = Button("Logout")
+    private lateinit var dataProvider: ConfigurableFilterDataProvider<JobApplicationResponse, Void, String>
 
     init {
         addClassName("list-view")
@@ -46,19 +51,51 @@ class JobListView(private val service: JobService, private val securityService: 
             getFilterField(),
             grid
         )
-        updateList()
     }
 
     private fun configureGrid() {
-        grid.setColumns("position", "companyName", "status")
-        grid.addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
-        grid.addColumn("description")
-        grid.columns.forEach { it.isAutoWidth = true }
+
+        val baseProvider = DataProvider.fromFilteringCallbacks(
+            { query: Query<JobApplicationResponse, String> ->
+                val offset = query.offset
+                val limit = query.limit
+
+                val pageable = PageRequest.of(
+                    offset / limit,
+                    limit,
+                    Sort.by("dateApplied").descending()
+                )
+
+                service.getJobs(pageable, query.filter.orElse(null)).content.stream()
+            },
+            { query: Query<JobApplicationResponse, String> ->
+                service.countJobs(query.filter.orElse(null)).toInt()
+            }
+        )
+
+        dataProvider = baseProvider.withConfigurableFilter()
+        grid.setItems(dataProvider)
+        grid.apply {
+            setColumns("position", "companyName", "status")
+            addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
+            addColumn("description")
+            columns.forEach { it.isAutoWidth = true }
+        }
+
         if (securityService.getAuthenticatedUser().isPresent) {
             grid.addItemDoubleClickListener { event ->
                 editJob(event.item)
             }
         }
+
+    }
+
+    private fun getFilterField(): Component {
+        filterField.valueChangeMode = ValueChangeMode.LAZY
+        filterField.addValueChangeListener { event ->
+            dataProvider.setFilter(event.value)
+        }
+        return HorizontalLayout(filterField)
     }
 
     private fun editJob(dto: JobApplicationResponse) {
@@ -79,14 +116,14 @@ class JobListView(private val service: JobService, private val securityService: 
                 service.saveJob(event.job)
             else
                 service.updateJobById(event.jobId, event.job)
-            updateList()
+            dataProvider.refreshAll()
             closeEditor()
         }
 
         jobForm.addDeleteListener { event ->
             if (event.jobId != null) {
                 service.deleteJob(event.jobId)
-                updateList()
+                dataProvider.refreshAll()
                 closeEditor()
             }
         }
@@ -94,13 +131,6 @@ class JobListView(private val service: JobService, private val securityService: 
         jobForm.addCancelButton {
             closeEditor()
         }
-    }
-
-    private fun updateList() {
-        if (filterField.value.isNullOrEmpty())
-            grid.setItems(service.getAllJobs())
-        else
-            grid.setItems(service.findJobsByCompanyName(filterField.value))
     }
 
     private fun configureDialog() {
@@ -146,14 +176,6 @@ class JobListView(private val service: JobService, private val securityService: 
         grid.asSingleSelect().clear()
         jobForm.setJob(JobApplicationRequest())
         dialog.open()
-    }
-
-    private fun getFilterField(): Component {
-        filterField.valueChangeMode = ValueChangeMode.LAZY
-        filterField.addValueChangeListener {
-            updateList()
-        }
-        return HorizontalLayout(filterField)
     }
 
 }

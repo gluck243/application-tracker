@@ -4,6 +4,8 @@ import com.gluck.jobtracker.exception.NoSuchJobFoundException
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.repository.ApplicationRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.lang.Exception
@@ -12,16 +14,27 @@ import java.lang.Exception
 @Transactional(rollbackFor = [Exception::class])
 class JobService(private val repository: ApplicationRepository, private val mapper: ApplicationMapper) {
 
-    fun getAllJobs(): List<JobApplicationResponse> {
-        val entities = repository.findAll()
+    fun getJobs(pageable: Pageable, filter: String?): Page<JobApplicationResponse> {
+        val page = if (filter.isNullOrBlank()) {
+            repository.findAll(pageable)
+        }
+        else {
+            repository.searchByCompany(filter, pageable)
+        }
+        return page.map { mapper.toResponse(it) }
+    }
+
+    fun findJobsByCompanyName(keyword: String, pageable: Pageable): Page<JobApplicationResponse> {
+        val entities = repository.searchByCompany(keyword, pageable)
         val responses = entities.map { entity -> mapper.toResponse(entity) }
         return responses
     }
 
-    fun findJobsByCompanyName(keyword: String): List<JobApplicationResponse> {
-        val entities = repository.filterByCompany(keyword)
-        val responses = entities.map { entity -> mapper.toResponse(entity) }
-        return responses
+    fun countJobs(filter: String?): Long {
+        return if (filter.isNullOrBlank())
+            repository.count()
+        else
+            repository.countByCompanyNameContainsIgnoreCase(filter)
     }
 
     fun saveJob(request: JobApplicationRequest): Long {

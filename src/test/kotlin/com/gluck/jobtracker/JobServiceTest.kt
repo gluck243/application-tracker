@@ -16,6 +16,9 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.*
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import java.time.LocalDate
 import java.util.Optional
 import kotlin.test.assertEquals
@@ -56,44 +59,59 @@ class JobServiceTest {
     }
 
     @Test
-    fun `should get all jobs`() {
+    fun `should get 2 jobs`() {
 
         val mocks = getMockJobs()
-        val response1 = JobApplicationResponse(4L, "Software Developer", "ABC Ltd.", Status.WISH_LIST, LocalDate.of(2025, 11, 15), null)
-        val response2 = JobApplicationResponse(7L, position = "Programmer", companyName = "Google", status = Status.INTERVIEWING, LocalDate.of(2025, 8, 15), null)
+        val response1 = JobApplicationResponse(
+            4L,
+            "Software Developer",
+            "ABC Ltd.", Status.WISH_LIST,
+            LocalDate.of(2025, 11, 15),
+            null
+        )
+        val response2 = JobApplicationResponse(
+            7L,
+            position = "Programmer",
+            companyName = "Google",
+            status = Status.INTERVIEWING,
+            LocalDate.of(2025, 8, 15),
+            null
+        )
 
-        whenever(repository.findAll()).thenReturn(mocks)
+
+        whenever(repository.findAll(any<Pageable>())).thenReturn(PageImpl(mocks))
+
         whenever(mapper.toResponse(any())).thenReturn(response1).thenReturn(response2)
 
-        val allJobs = service.getAllJobs()
+        val allJobsPage = service.getJobs(PageRequest.of(0, 10), null)
 
-        assertThat(allJobs).containsExactly(response1, response2)
+        assertThat(allJobsPage.content).containsExactly(response1, response2)
 
-        verify(repository).findAll()
+        verify(repository).findAll(any<Pageable>())
         verify(mapper).toResponse(mocks[0])
         verify(mapper).toResponse(mocks[1])
+
     }
 
     @Test
     fun `should filter a company name starting with G`() {
 
         val existingJob = getMockJobs()[1]
-        val response2 = JobApplicationResponse(7L,
-            position = "Programmer",
-            companyName = "Google",
-            status = Status.INTERVIEWING,
-            LocalDate.of(2025, 8, 15), null)
-        val stringCaptor = argumentCaptor<String>()
+        val response2 = JobApplicationResponse(7L, "Programmer", "Google", Status.INTERVIEWING, LocalDate.of(2025, 8, 15), null)
 
-        whenever(repository.filterByCompany("G")).thenReturn(listOf(existingJob))
+        val pageOfEntities = PageImpl(listOf(existingJob))
+
+        whenever(repository.searchByCompany(eq("G"), any())).thenReturn(pageOfEntities)
         whenever(mapper.toResponse(existingJob)).thenReturn(response2)
 
-        val filteredJobs = service.findJobsByCompanyName("G")
+        val filteredPage = service.getJobs(PageRequest.of(0, 10), "G")
 
-        verify(repository).filterByCompany(stringCaptor.capture())
-        verify(repository, never()).findAll()
+        val stringCaptor = argumentCaptor<String>()
 
-        assertEquals("Google", filteredJobs[0].companyName)
+        verify(repository).searchByCompany(stringCaptor.capture(), any())
+        verify(repository, never()).findAll(any<Pageable>()) // Ensure findAll wasn't called
+
+        assertEquals("Google", filteredPage.content[0].companyName)
         assertEquals("G", stringCaptor.firstValue)
 
     }
