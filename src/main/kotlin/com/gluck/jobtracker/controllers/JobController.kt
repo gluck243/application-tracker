@@ -41,7 +41,7 @@ class JobController(private val service: JobService) {
     @GetMapping("/jobs")
     fun getAllApplications(
         @RequestParam(required = false) companyName: String?,
-        @PageableDefault(size = 20, sort = ["dateApplied"], direction = Sort.Direction.DESC) pageable: Pageable
+        @PageableDefault(size = 20) pageable: Pageable
     ): ResponseEntity<Page<JobApplicationResponse>> {
         val applications = service.getJobs(pageable, companyName)
         return ResponseEntity.ok(applications)
