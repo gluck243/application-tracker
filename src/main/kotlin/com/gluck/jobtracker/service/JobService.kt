@@ -14,13 +14,17 @@ import java.lang.Exception
 @Transactional(rollbackFor = [Exception::class])
 class JobService(private val repository: ApplicationRepository, private val mapper: ApplicationMapper) {
 
-    fun getJobs(pageable: Pageable, filter: String?): Page<JobApplicationResponse> {
-        val page = if (filter.isNullOrBlank()) {
-            repository.findAll(pageable)
+    fun getJobs(pageable: Pageable, searchTerm: String?, searchBy: String): Page<JobApplicationResponse> {
+        if (searchTerm.isNullOrBlank()) {
+            return repository.findAll(pageable).map { mapper.toResponse(it) }
         }
-        else {
-            repository.searchByCompany(filter, pageable)
+
+        val page = when (searchBy) {
+            "Position" -> repository.searchByPosition(searchTerm, pageable)
+            "Description" -> repository.searchByDescription(searchTerm, pageable)
+            else -> repository.searchByCompany(searchTerm, pageable)
         }
+
         return page.map { mapper.toResponse(it) }
     }
 
@@ -30,11 +34,16 @@ class JobService(private val repository: ApplicationRepository, private val mapp
         return responses
     }
 
-    fun countJobs(filter: String?): Long {
-        return if (filter.isNullOrBlank())
+    fun countJobs(searchTerm: String?, searchBy: String): Long {
+        return if (searchTerm.isNullOrBlank())
             repository.count()
-        else
-            repository.countByCompanyNameContainsIgnoreCase(filter)
+        else {
+            when (searchBy) {
+                "Position" -> repository.countByPositionContainsIgnoreCase(searchTerm)
+                "Description" -> repository.countByDescriptionContainsIgnoreCase(searchTerm)
+                else -> repository.countByCompanyNameContainsIgnoreCase(searchTerm)
+            }
+        }
     }
 
     fun saveJob(request: JobApplicationRequest): Long {
