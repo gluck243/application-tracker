@@ -29,7 +29,7 @@ data class JobApplicationRequest(
         description = "Status of an application",
         required = true
     )
-    var status: Status = Status.WISH_LIST,
+    var status: Status = Status.APPLIED,
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy") @NotNull
     @field:Schema(
