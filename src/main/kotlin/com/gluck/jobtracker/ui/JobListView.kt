@@ -4,6 +4,7 @@ import com.gluck.base.ui.MainLayout
 import com.gluck.jobtracker.service.JobService
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
+import com.gluck.jobtracker.model.JobFilter
 import com.gluck.jobtracker.service.SecurityService
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
@@ -14,6 +15,7 @@ import com.vaadin.flow.component.html.H2
 import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
+import com.vaadin.flow.component.select.Select
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider
 import com.vaadin.flow.data.provider.DataProvider
@@ -35,10 +37,11 @@ class JobListView(private val service: JobService, private val securityService: 
     private val jobForm = JobForm()
     private val dialog = Dialog("Job Application Information")
     private val addJobButton = Button("Add Job")
-    private val filterField = TextField("Search by Company name")
+    private val searchField = TextField("Search by...")
+    private val selector = Select<String>()
     private val login = Button("Login")
     private val logout = Button("Logout")
-    private lateinit var dataProvider: ConfigurableFilterDataProvider<JobApplicationResponse, Void, String>
+    private lateinit var dataProvider: ConfigurableFilterDataProvider<JobApplicationResponse, Void, JobFilter>
 
     init {
         addClassName("list-view")
@@ -48,7 +51,7 @@ class JobListView(private val service: JobService, private val securityService: 
         configureJobForm()
         add(
             getToolbar(),
-            getFilterField(),
+            getSearchToolbar(),
             grid
         )
     }
@@ -56,7 +59,7 @@ class JobListView(private val service: JobService, private val securityService: 
     private fun configureGrid() {
 
         val baseProvider = DataProvider.fromFilteringCallbacks(
-            { query: Query<JobApplicationResponse, String> ->
+            { query: Query<JobApplicationResponse, JobFilter> ->
                 val offset = query.offset
                 val limit = query.limit
 
@@ -66,10 +69,13 @@ class JobListView(private val service: JobService, private val securityService: 
                     Sort.by("dateApplied").descending()
                 )
 
-                service.getJobs(pageable, query.filter.orElse(null)).content.stream()
+                val filter = query.filter.orElse(JobFilter())
+
+                service.getJobs(pageable, filter.searchTerm, filter.searchBy).content.stream()
             },
-            { query: Query<JobApplicationResponse, String> ->
-                service.countJobs(query.filter.orElse(null)).toInt()
+            { query: Query<JobApplicationResponse, JobFilter> ->
+                val filter = query.filter.orElse(JobFilter())
+                service.countJobs(filter.searchTerm, filter.searchBy).toInt()
             }
         )
 
@@ -90,12 +96,30 @@ class JobListView(private val service: JobService, private val securityService: 
 
     }
 
-    private fun getFilterField(): Component {
-        filterField.valueChangeMode = ValueChangeMode.LAZY
-        filterField.addValueChangeListener { event ->
-            dataProvider.setFilter(event.value)
+    private fun getSearchToolbar(): Component {
+        selector.apply {
+            label = "Search by"
+            setItems("Company", "Position", "Description")
+            value = "Company"
+            addValueChangeListener { refreshGrid() }
         }
-        return HorizontalLayout(filterField)
+        searchField.apply {
+            placeholder = "Filter..."
+            isClearButtonVisible = true
+            valueChangeMode = ValueChangeMode.LAZY
+            addValueChangeListener { refreshGrid() }
+        }
+        val searchLayout = HorizontalLayout(selector, searchField)
+        searchLayout.defaultVerticalComponentAlignment = FlexComponent.Alignment.BASELINE
+        return searchLayout
+    }
+
+    private fun refreshGrid() {
+        val filterObj = JobFilter(
+            searchField.value,
+            selector.value
+        )
+        dataProvider.setFilter(filterObj)
     }
 
     private fun editJob(dto: JobApplicationResponse) {
