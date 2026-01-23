@@ -40,10 +40,11 @@ class JobController(private val service: JobService) {
     ])
     @GetMapping("/jobs")
     fun getAllApplications(
-        @RequestParam(required = false) companyName: String?,
+        @RequestParam(required = false) searchTerm: String?,
+        @RequestParam(required = false, defaultValue = "Company") searchBy: String,
         @PageableDefault(size = 20) pageable: Pageable
     ): ResponseEntity<Page<JobApplicationResponse>> {
-        val applications = service.getJobs(pageable, companyName)
+        val applications = service.getJobs(pageable, searchTerm, searchBy)
         return ResponseEntity.ok(applications)
     }
 
