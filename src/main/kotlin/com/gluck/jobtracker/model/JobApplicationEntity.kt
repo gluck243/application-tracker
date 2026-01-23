@@ -24,11 +24,11 @@ class JobApplicationEntity(
     var companyName: String = "",
 
     @Enumerated @Column(nullable = false)
-    var status: Status = Status.WISH_LIST,
+    var status: Status = Status.APPLIED,
 
     @Column(nullable = true)
     var dateApplied: LocalDate? = null,
 
-    @Lob @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "TEXT")
     var description: String? = ""
 ) {}
