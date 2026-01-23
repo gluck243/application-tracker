@@ -83,7 +83,7 @@ class JobServiceTest {
 
         whenever(mapper.toResponse(any())).thenReturn(response1).thenReturn(response2)
 
-        val allJobsPage = service.getJobs(PageRequest.of(0, 10), null)
+        val allJobsPage = service.getJobs(PageRequest.of(0, 10), null, "Company")
 
         assertThat(allJobsPage.content).containsExactly(response1, response2)
 
@@ -97,14 +97,20 @@ class JobServiceTest {
     fun `should filter a company name starting with G`() {
 
         val existingJob = getMockJobs()[1]
-        val response2 = JobApplicationResponse(7L, "Programmer", "Google", Status.INTERVIEWING, LocalDate.of(2025, 8, 15), null)
+        val response2 = JobApplicationResponse(
+            7L,
+            "Programmer",
+            "Google",
+            Status.INTERVIEWING,
+            LocalDate.of(2025, 8, 15),
+            null)
 
         val pageOfEntities = PageImpl(listOf(existingJob))
 
         whenever(repository.searchByCompany(eq("G"), any())).thenReturn(pageOfEntities)
         whenever(mapper.toResponse(existingJob)).thenReturn(response2)
 
-        val filteredPage = service.getJobs(PageRequest.of(0, 10), "G")
+        val filteredPage = service.getJobs(PageRequest.of(0, 10), "G", "Company")
 
         val stringCaptor = argumentCaptor<String>()
 
@@ -113,6 +119,35 @@ class JobServiceTest {
 
         assertEquals("Google", filteredPage.content[0].companyName)
         assertEquals("G", stringCaptor.firstValue)
+
+    }
+
+    @Test
+    fun `should filter a position name starting with P`() {
+
+        val existingJob = getMockJobs()[1]
+        val response2 = JobApplicationResponse(
+            7L,
+            "Programmer",
+            "Google",
+            Status.INTERVIEWING,
+            LocalDate.of(2025, 8, 15),
+            null)
+
+        val pageOfEntities = PageImpl(listOf(existingJob))
+
+        whenever(repository.searchByPosition(eq("P"), any())).thenReturn(pageOfEntities)
+        whenever(mapper.toResponse(existingJob)).thenReturn(response2)
+
+        val filteredPage = service.getJobs(PageRequest.of(0, 10), "P", "Position")
+
+        val stringCaptor = argumentCaptor<String>()
+
+        verify(repository).searchByPosition(stringCaptor.capture(), any())
+        verify(repository, never()).findAll(any<Pageable>()) // Ensure findAll wasn't called
+
+        assertEquals("Programmer", filteredPage.content[0].position)
+        assertEquals("P", stringCaptor.firstValue)
 
     }
 

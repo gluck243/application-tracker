@@ -9,6 +9,7 @@ import com.gluck.jobtracker.service.JobService
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.check
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
@@ -49,7 +50,7 @@ class JobControllerTest {
 
         val pageOfMocks = PageImpl(mocks)
 
-        whenever(service.getJobs(any(), org.mockito.kotlin.anyOrNull())).thenReturn(pageOfMocks)
+        whenever(service.getJobs(any(), anyOrNull(), any())).thenReturn(pageOfMocks)
 
         mockMvc.get("/api/jobs") {
             accept = MediaType.APPLICATION_JSON
