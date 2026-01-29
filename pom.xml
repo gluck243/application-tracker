@@ -152,6 +152,13 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.42</version>
+            <scope>compile</scope>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.github.appreciated</groupId>-->
 <!--            <artifactId>apexcharts</artifactId>-->
@@ -244,6 +251,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.42</version> </path>
+                    </annotationProcessorPaths>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-compile</id>
