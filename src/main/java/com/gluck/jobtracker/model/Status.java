@@ -1,6 +1,6 @@
-package com.gluck.jobtracker.model
+package com.gluck.jobtracker.model;
 
-enum class Status {
+public enum Status {
     APPLIED,
     INTERVIEW_SCHEDULED,
     INTERVIEWING,
@@ -9,3 +9,4 @@ enum class Status {
     GHOSTED,
     WISH_LIST
 }
+
