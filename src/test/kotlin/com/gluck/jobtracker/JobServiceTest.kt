@@ -1,7 +1,7 @@
 package com.gluck.jobtracker
 
 import com.gluck.jobtracker.exception.NoSuchJobFoundException
-import com.gluck.jobtracker.model.JobApplicationEntity
+import com.gluck.jobtracker.repository.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.model.Status
@@ -42,7 +42,8 @@ class JobServiceTest {
         val request = JobApplicationRequest("Software Developer",
             "ABC Ltd.",
             Status.WISH_LIST,
-            LocalDate.of(2025, 11, 15))
+            LocalDate.of(2025, 11, 15),
+            "")
         val requestCaptor = argumentCaptor<JobApplicationRequest>()
 
         whenever(mapper.toEntity(request)).thenReturn(mocks[0])
@@ -71,9 +72,9 @@ class JobServiceTest {
         )
         val response2 = JobApplicationResponse(
             7L,
-            position = "Programmer",
-            companyName = "Google",
-            status = Status.INTERVIEWING,
+            "Programmer",
+            "Google",
+            Status.INTERVIEWING,
             LocalDate.of(2025, 8, 15),
             null
         )
@@ -146,7 +147,7 @@ class JobServiceTest {
         verify(repository).searchByPosition(stringCaptor.capture(), any())
         verify(repository, never()).findAll(any<Pageable>()) // Ensure findAll wasn't called
 
-        assertEquals("Programmer", filteredPage.content[0].position)
+        assertEquals("Programmer", filteredPage.content[0].position())
         assertEquals("P", stringCaptor.firstValue)
 
     }
@@ -159,7 +160,8 @@ class JobServiceTest {
             "Senior Full-stack Developer",
             "ABC Ltd.",
             Status.INTERVIEWING,
-            LocalDate.of(2025, 11, 15)
+            LocalDate.of(2025, 11, 15),
+            ""
         )
 
         whenever(repository.findById(4L)).thenReturn(Optional.of(existingJob))
@@ -185,7 +187,8 @@ class JobServiceTest {
             "Senior Full-stack Developer",
             "ABC Ltd.",
             Status.INTERVIEWING,
-            LocalDate.of(2025, 11, 15)
+            LocalDate.of(2025, 11, 15),
+            ""
         )
 
         whenever(repository.findById(99L)).thenReturn(Optional.empty())
@@ -234,7 +237,8 @@ class JobServiceTest {
             "Software Developer",
             "ABC Ltd.",
             Status.WISH_LIST,
-            LocalDate.of(2025, 11, 15)
+            LocalDate.of(2025, 11, 15),
+            ""
         )
 
         whenever(repository.findById(4L)).thenReturn(Optional.of(existingJob))
@@ -311,13 +315,15 @@ class JobServiceTest {
             "Software Developer",
             "ABC Ltd.",
             Status.WISH_LIST,
-            LocalDate.of(2025, 11, 15)
+            LocalDate.of(2025, 11, 15),
+            ""
         )
         val mockJob2 = JobApplicationEntity(7L,
-            position = "Programmer",
-            companyName = "Google",
-            status = Status.INTERVIEWING,
-            LocalDate.of(2025, 8, 15)
+            "Programmer",
+            "Google",
+            Status.INTERVIEWING,
+            LocalDate.of(2025, 8, 15),
+            ""
         )
 
         return listOf(mockJob1, mockJob2)
