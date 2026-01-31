@@ -1,6 +1,6 @@
 package com.gluck.jobtracker
 
-import com.gluck.jobtracker.model.JobApplicationEntity
+import com.gluck.jobtracker.repository.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.Status
 import com.gluck.jobtracker.service.ApplicationMapper
@@ -21,6 +21,7 @@ class ApplicationMapperTest {
             "Google",
             Status.INTERVIEWING,
             LocalDate.of(2025, 8, 15),
+            ""
         )
 
         val entity = mapper.toEntity(request)
@@ -43,6 +44,7 @@ class ApplicationMapperTest {
             "Google",
             Status.INTERVIEWING,
             LocalDate.of(2025, 8, 15),
+            ""
         )
 
         val response = mapper.toResponse(entity)
@@ -62,6 +64,7 @@ class ApplicationMapperTest {
             "Google",
             Status.INTERVIEWING,
             LocalDate.of(2025, 8, 15),
+            ""
         )
 
         val request = mapper.toRequest(entity)
