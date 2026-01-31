@@ -1,6 +1,6 @@
 package com.gluck.jobtracker
 
-import com.gluck.jobtracker.model.JobApplicationEntity
+import com.gluck.jobtracker.repository.JobApplicationEntity
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.Status
 import com.gluck.jobtracker.repository.ApplicationRepository
@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.delete
@@ -51,16 +50,20 @@ class JobIntegrationTest {
     fun `should get all job applications`() {
 
         repository.save(JobApplicationEntity(
-            position = "Software Developer",
-            companyName = "ABC Ltd.",
-            status = Status.WISH_LIST,
-            dateApplied = LocalDate.of(2025, 11, 15)
+            0L,
+            "Software Developer",
+            "ABC Ltd.",
+            Status.WISH_LIST,
+            LocalDate.of(2025, 11, 15),
+            ""
         ))
         repository.save(JobApplicationEntity(
-            position = "Programmer",
-            companyName = "Google",
-            status = Status.INTERVIEWING,
-            dateApplied = LocalDate.of(2025, 8, 15)
+            0L,
+            "Programmer",
+            "Google",
+            Status.INTERVIEWING,
+            LocalDate.of(2025, 8, 15),
+            ""
         ))
 
         mockMvc.get("/api/jobs") {
@@ -83,7 +86,8 @@ class JobIntegrationTest {
             "Programmer",
             "Google",
             Status.INTERVIEWING,
-            LocalDate.of(2025, 8, 15)
+            LocalDate.of(2025, 8, 15),
+            ""
         )
         val updateRequest = JobApplicationRequest(
             "Super Programmer",
