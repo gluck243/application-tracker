@@ -71,11 +71,11 @@ class JobListView(private val service: JobService, private val securityService: 
 
                 val filter = query.filter.orElse(JobFilter())
 
-                service.getJobs(pageable, filter.searchTerm, filter.searchBy).content.stream()
+                service.getJobs(pageable, filter.searchTerm, filter.searchBy ?: "Company").content.stream()
             },
             { query: Query<JobApplicationResponse, JobFilter> ->
                 val filter = query.filter.orElse(JobFilter())
-                service.countJobs(filter.searchTerm, filter.searchBy).toInt()
+                service.countJobs(filter.searchTerm, filter.searchBy ?: "Company").toInt()
             }
         )
 
@@ -83,7 +83,7 @@ class JobListView(private val service: JobService, private val securityService: 
         grid.setItems(dataProvider)
         grid.apply {
             setColumns("position", "companyName", "status")
-            addColumn(LocalDateRenderer(JobApplicationResponse::dateApplied, "dd.MM.yyyy")).setHeader("Date Applied")
+            addColumn(LocalDateRenderer({ it.dateApplied() }, "dd.MM.yyyy")).setHeader("Date Applied")
             addColumn("description")
             columns.forEach { it.isAutoWidth = true }
         }
@@ -115,16 +115,16 @@ class JobListView(private val service: JobService, private val securityService: 
     }
 
     private fun refreshGrid() {
-        val filterObj = JobFilter(
-            searchField.value,
-            selector.value
-        )
+        val filterObj = JobFilter().apply {
+            searchTerm = searchField.value ?: ""
+            searchBy = selector.value ?: "Company"
+        }
         dataProvider.setFilter(filterObj)
     }
 
     private fun editJob(dto: JobApplicationResponse) {
-        val requestDto = service.findJobForEditing(dto.id)
-        jobForm.setJob(requestDto, dto.id)
+        val requestDto = service.findJobForEditing(dto.id())
+        jobForm.setJob(requestDto, dto.id())
         dialog.open()
 
     }
