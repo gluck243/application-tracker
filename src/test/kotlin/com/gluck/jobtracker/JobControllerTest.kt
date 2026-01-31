@@ -120,15 +120,15 @@ class JobControllerTest {
 
         val response = getMockResponses()[0]
 
-        whenever(service.findJobById(response.id)).thenReturn(response)
+        whenever(service.findJobById(response.id())).thenReturn(response)
 
-        mockMvc.get("/api/jobs/${response.id}") {
+        mockMvc.get("/api/jobs/${response.id()}") {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonPath("$.id") { value(response.id) }
-            jsonPath("$.companyName") { value(response.companyName) }
+            jsonPath("$.id") { value(response.id()) }
+            jsonPath("$.companyName") { value(response.companyName()) }
         }.andDo { print() }
 
     }
@@ -163,21 +163,21 @@ class JobControllerTest {
         )
         val response = getMockResponses()[0]
 
-        whenever(service.updateJobById(eq(response.id), any())).thenReturn(response)
+        whenever(service.updateJobById(eq(response.id()), any())).thenReturn(response)
 
-        mockMvc.put("/api/jobs/${response.id}") {
+        mockMvc.put("/api/jobs/${response.id()}") {
             accept = MediaType.APPLICATION_JSON
             contentType = MediaType.APPLICATION_JSON
             content = objectMapper.writeValueAsString(request)
         }.andExpect {
             status { isOk() }
             content { contentType(MediaType.APPLICATION_JSON) }
-            jsonPath("$.position") { value(response.position) }
-            jsonPath("$.companyName") { value(response.companyName) }
-            jsonPath("$.status") { value(response.status.toString()) }
+            jsonPath("$.position") { value(response.position()) }
+            jsonPath("$.companyName") { value(response.companyName()) }
+            jsonPath("$.status") { value(response.status().toString()) }
         }.andDo { print() }
 
-        verify(service).updateJobById(eq(response.id), check { serviceArg ->
+        verify(service).updateJobById(eq(response.id()), check { serviceArg ->
             assertEquals(request.companyName, serviceArg.companyName)
             assertEquals(request.position, serviceArg.position)
         })
@@ -215,13 +215,13 @@ class JobControllerTest {
     fun `DELETE job by id should delete job and return NO CONTENT`() {
         val response = getMockResponses()[0]
 
-        mockMvc.delete("/api/jobs/${response.id}") {
+        mockMvc.delete("/api/jobs/${response.id()}") {
             accept = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isNoContent() }
         }.andDo { print() }
 
-        verify(service, times(1)).deleteJob(response.id)
+        verify(service, times(1)).deleteJob(response.id())
     }
 
     @Test
@@ -251,9 +251,9 @@ class JobControllerTest {
             null
         )
         val mockJob2 = JobApplicationResponse(7L,
-            position = "Programmer",
-            companyName = "Google",
-            status = Status.INTERVIEWING,
+            "Programmer",
+            "Google",
+            Status.INTERVIEWING,
             LocalDate.of(2025, 8, 15),
             null
         )
