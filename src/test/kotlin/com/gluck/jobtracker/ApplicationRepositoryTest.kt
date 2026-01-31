@@ -1,7 +1,7 @@
 package com.gluck.jobtracker
 
 
-import com.gluck.jobtracker.model.JobApplicationEntity
+import com.gluck.jobtracker.repository.JobApplicationEntity
 import com.gluck.jobtracker.model.Status
 import com.gluck.jobtracker.repository.ApplicationRepository
 import org.junit.jupiter.api.Test
@@ -18,9 +18,9 @@ class ApplicationRepositoryTest {
 
     @Test
     fun `should filter companies by name`() {
-        val record1 = JobApplicationEntity(position = "Backend Dev", companyName = "Abc Ltd")
-        val record2 = JobApplicationEntity(position = "Programmer", companyName = "Google", status = Status.INTERVIEWING)
-        val record3 = JobApplicationEntity(position = "Code Pro", companyName = "Bongo", status = Status.APPLIED)
+        val record1 = JobApplicationEntity(0L, "Backend Dev", "Abc Ltd", Status.APPLIED, null, "")
+        val record2 = JobApplicationEntity(0L, "Programmer", "Google", Status.INTERVIEWING, null, "")
+        val record3 = JobApplicationEntity(0L, "Code Pro", "Bongo", Status.APPLIED, null, "")
 
         repository.saveAll(listOf(record1, record2, record3))
 
