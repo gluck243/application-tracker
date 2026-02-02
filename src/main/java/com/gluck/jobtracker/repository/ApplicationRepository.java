@@ -1,5 +1,6 @@
 package com.gluck.jobtracker.repository;
 
+import com.gluck.jobtracker.model.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,6 +23,8 @@ public interface ApplicationRepository extends JpaRepository<JobApplicationEntit
 
     @Query("SELECT COUNT(ja) FROM JobApplicationEntity ja WHERE UPPER(CAST(ja.description AS string)) LIKE UPPER(CONCAT('%', :desc, '%'))")
     Long countByDescriptionContainsIgnoreCase(String desc);
+
+    Long countByStatusIs(Status status);
 
 }
 
