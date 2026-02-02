@@ -3,6 +3,7 @@ package com.gluck.jobtracker.service;
 import com.gluck.jobtracker.exception.NoSuchJobFoundException;
 import com.gluck.jobtracker.model.JobApplicationRequest;
 import com.gluck.jobtracker.model.JobApplicationResponse;
+import com.gluck.jobtracker.model.Status;
 import com.gluck.jobtracker.repository.ApplicationRepository;
 import com.gluck.jobtracker.repository.JobApplicationEntity;
 import lombok.AllArgsConstructor;
@@ -89,6 +90,10 @@ public class JobService {
         var entity = repository.findById(id)
                 .orElseThrow(() -> new NoSuchJobFoundException("No matching job found for " + id));
         return mapper.toResponse(entity);
+    }
+
+    public Long countByStatus(Status status) {
+        return repository.countByStatusIs(status);
     }
 }
 
