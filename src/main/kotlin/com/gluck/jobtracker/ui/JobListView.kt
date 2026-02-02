@@ -16,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout
 import com.vaadin.flow.component.orderedlayout.VerticalLayout
 import com.vaadin.flow.component.select.Select
+import com.vaadin.flow.component.textfield.NumberField
 import com.vaadin.flow.component.textfield.TextField
 import com.vaadin.flow.data.provider.ConfigurableFilterDataProvider
 import com.vaadin.flow.data.provider.DataProvider
@@ -37,11 +38,12 @@ class JobListView(private val service: JobService, private val securityService: 
     private val jobForm = JobForm()
     private val dialog = Dialog("Job Application Information")
     private val addJobButton = Button("Add Job")
-    private val searchField = TextField("Search by...")
+    private val searchField = TextField()
     private val selector = Select<String>()
     private val login = Button("Login")
     private val logout = Button("Logout")
     private lateinit var dataProvider: ConfigurableFilterDataProvider<JobApplicationResponse, Void, JobFilter>
+    private val allApplicationCounter = NumberField("Total Applications")
 
     init {
         addClassName("list-view")
@@ -97,21 +99,33 @@ class JobListView(private val service: JobService, private val securityService: 
     }
 
     private fun getSearchToolbar(): Component {
+
         selector.apply {
             label = "Search by"
             setItems("Company", "Position", "Description")
             value = "Company"
             addValueChangeListener { refreshGrid() }
         }
+
         searchField.apply {
             placeholder = "Filter..."
             isClearButtonVisible = true
             valueChangeMode = ValueChangeMode.LAZY
             addValueChangeListener { refreshGrid() }
         }
-        val searchLayout = HorizontalLayout(selector, searchField)
+
+        allApplicationCounter.apply {
+            isReadOnly = true
+            allApplicationCounter.style.set("margin-left", "auto")
+        }
+        updateCounter()
+
+        val searchLayout = HorizontalLayout(selector, searchField, allApplicationCounter)
+        searchLayout.setWidthFull()
         searchLayout.defaultVerticalComponentAlignment = FlexComponent.Alignment.BASELINE
+
         return searchLayout
+
     }
 
     private fun refreshGrid() {
@@ -126,7 +140,6 @@ class JobListView(private val service: JobService, private val securityService: 
         val requestDto = service.findJobForEditing(dto.id())
         jobForm.setJob(requestDto, dto.id())
         dialog.open()
-
     }
 
     private fun closeEditor() {
@@ -141,6 +154,7 @@ class JobListView(private val service: JobService, private val securityService: 
             else
                 service.updateJobById(event.jobId, event.job)
             dataProvider.refreshAll()
+            updateCounter()
             closeEditor()
         }
 
@@ -148,6 +162,7 @@ class JobListView(private val service: JobService, private val securityService: 
             if (event.jobId != null) {
                 service.deleteJob(event.jobId)
                 dataProvider.refreshAll()
+                updateCounter()
                 closeEditor()
             }
         }
@@ -200,6 +215,10 @@ class JobListView(private val service: JobService, private val securityService: 
         grid.asSingleSelect().clear()
         jobForm.setJob(JobApplicationRequest())
         dialog.open()
+    }
+
+    private fun updateCounter() {
+        allApplicationCounter.value = service.countJobs(null, null).toDouble()
     }
 
 }
