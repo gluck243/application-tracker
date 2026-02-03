@@ -310,11 +310,32 @@ class JobServiceTest {
 
     }
 
+    @Test
+    fun `should count total jobs as 3, applied as 2 and interviewing as 1`() {
+
+        whenever(repository.count()).thenReturn(3)
+        whenever(repository.countByStatusIs(Status.APPLIED)).thenReturn(2)
+        whenever(repository.countByStatusIs(Status.INTERVIEWING)).thenReturn(1)
+
+        val allJobs = service.countJobs(null, null)
+        val applied = service.countByStatus(Status.APPLIED)
+        val interviewing = service.countByStatus(Status.INTERVIEWING)
+
+        assertEquals(3, allJobs)
+        assertEquals(2, applied)
+        assertEquals(1, interviewing)
+
+        verify(repository).count()
+        verify(repository).countByStatusIs(Status.APPLIED)
+        verify(repository).countByStatusIs(Status.INTERVIEWING)
+
+    }
+
     private fun getMockJobs(): List<JobApplicationEntity> {
         val mockJob1 = JobApplicationEntity(4L,
             "Software Developer",
             "ABC Ltd.",
-            Status.WISH_LIST,
+            Status.APPLIED,
             LocalDate.of(2025, 11, 15),
             ""
         )
