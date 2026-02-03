@@ -5,6 +5,7 @@ import com.gluck.jobtracker.service.JobService
 import com.gluck.jobtracker.model.JobApplicationRequest
 import com.gluck.jobtracker.model.JobApplicationResponse
 import com.gluck.jobtracker.model.JobFilter
+import com.gluck.jobtracker.model.Status
 import com.gluck.jobtracker.service.SecurityService
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.UI
@@ -39,11 +40,12 @@ class JobListView(private val service: JobService, private val securityService: 
     private val dialog = Dialog("Job Application Information")
     private val addJobButton = Button("Add Job")
     private val searchField = TextField()
-    private val selector = Select<String>()
+    private val searchSelector = Select<String>()
     private val login = Button("Login")
     private val logout = Button("Logout")
     private lateinit var dataProvider: ConfigurableFilterDataProvider<JobApplicationResponse, Void, JobFilter>
-    private val allApplicationCounter = NumberField("Total Applications")
+    private val counterSelector = Select<String>()
+    private val counter = NumberField()
 
     init {
         addClassName("list-view")
@@ -100,7 +102,7 @@ class JobListView(private val service: JobService, private val securityService: 
 
     private fun getSearchToolbar(): Component {
 
-        selector.apply {
+        searchSelector.apply {
             label = "Search by"
             setItems("Company", "Position", "Description")
             value = "Company"
@@ -114,24 +116,40 @@ class JobListView(private val service: JobService, private val securityService: 
             addValueChangeListener { refreshGrid() }
         }
 
-        allApplicationCounter.apply {
-            isReadOnly = true
-            allApplicationCounter.style.set("margin-left", "auto")
+        counterSelector.apply {
+            label = "Count by"
+            setItems("Total", "Rejected", "Ghosted", "Interviewing", "Offer")
+            value = "Total"
+            style.set("margin-left", "auto")
+            addValueChangeListener { changeCounter() }
         }
-        updateCounter()
 
-        val searchLayout = HorizontalLayout(selector, searchField, allApplicationCounter)
-        searchLayout.setWidthFull()
-        searchLayout.defaultVerticalComponentAlignment = FlexComponent.Alignment.BASELINE
+        counter.apply {
+            isReadOnly = true
+            style.set("margin-left", "auto")
+            updateCounter()
+        }
 
-        return searchLayout
+        val rightToolbar = HorizontalLayout(counterSelector, counter)
+        rightToolbar.apply {
+            defaultVerticalComponentAlignment = FlexComponent.Alignment.BASELINE
+            style.set("margin-left", "auto")
+        }
+
+        val mainToolbar = HorizontalLayout(searchSelector, searchField, rightToolbar)
+        mainToolbar.apply {
+            setWidthFull()
+            defaultVerticalComponentAlignment = FlexComponent.Alignment.BASELINE
+        }
+
+        return mainToolbar
 
     }
 
     private fun refreshGrid() {
         val filterObj = JobFilter().apply {
             searchTerm = searchField.value ?: ""
-            searchBy = selector.value ?: "Company"
+            searchBy = searchSelector.value ?: "Company"
         }
         dataProvider.setFilter(filterObj)
     }
@@ -218,7 +236,17 @@ class JobListView(private val service: JobService, private val securityService: 
     }
 
     private fun updateCounter() {
-        allApplicationCounter.value = service.countJobs(null, null).toDouble()
+        counter.value = service.countJobs(null, null).toDouble()
+    }
+
+    private fun changeCounter() {
+        when (counterSelector.value) {
+            "Rejected" -> counter.value = service.countByStatus(Status.REJECTED).toDouble()
+            "Ghosted" -> counter.value = service.countByStatus(Status.GHOSTED).toDouble()
+            "Interviewing" -> counter.value = service.countByStatus(Status.INTERVIEWING).toDouble()
+            "Offer" -> counter.value = service.countByStatus(Status.OFFER).toDouble()
+            else -> updateCounter()
+        }
     }
 
 }
